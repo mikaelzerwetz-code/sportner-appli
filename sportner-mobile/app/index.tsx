@@ -1,51 +1,90 @@
 import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const SPORTS = ['Running', 'Padel', 'Football', 'Fitness', 'Boxe', 'Tennis'] as const;
+
+const NEARBY_PROFILES = [
+  { name: 'Lucas', age: 24, sport: 'Padel', level: 'Intermédiaire', distance: '1,2 km' },
+  { name: 'Sarah', age: 22, sport: 'Running', level: 'Intermédiaire', distance: '2,1 km' },
+  { name: 'Mehdi', age: 26, sport: 'Football', level: 'Avancé', distance: '3,4 km' },
+] as const;
 
 export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" />
 
-      <View style={styles.header}>
-        <Text style={styles.logo}>SPORTNER</Text>
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>MARSEILLE</Text>
-        </View>
-      </View>
-
-      <View style={styles.hero}>
-        <Text style={styles.eyebrow}>BOUGE. RENCONTRE. JOUE.</Text>
-        <Text style={styles.title}>
-          Avec qui tu{'\n'}
-          <Text style={styles.highlight}>bouges aujourd’hui ?</Text>
-        </Text>
-
-        <Text style={styles.subtitle}>
-          Trouve des sportifs près de toi, selon ton sport, ton niveau et tes disponibilités.
-        </Text>
-
-        <TouchableOpacity style={styles.button} activeOpacity={0.85}>
-          <Text style={styles.buttonText}>Trouver un partenaire</Text>
-          <Text style={styles.arrow}>→</Text>
-        </TouchableOpacity>
-
-        <View style={styles.sportsSection}>
-          <Text style={styles.sportsTitle}>Choisis ton sport</Text>
-          <View style={styles.sportsList}>
-            {SPORTS.map((sport) => (
-              <TouchableOpacity key={sport} style={styles.sportChip} activeOpacity={0.85}>
-                <Text style={styles.sportChipText}>{sport}</Text>
-              </TouchableOpacity>
-            ))}
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.header}>
+          <Text style={styles.logo}>SPORTNER</Text>
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>MARSEILLE</Text>
           </View>
         </View>
-      </View>
 
-      <View style={styles.bottom}>
-        <Text style={styles.bottomText}>SPORT • COMMUNAUTÉ • MARSEILLE</Text>
-      </View>
+        <View style={styles.hero}>
+          <Text style={styles.eyebrow}>BOUGE. RENCONTRE. JOUE.</Text>
+          <Text style={styles.title}>
+            Avec qui tu{'\n'}
+            <Text style={styles.highlight}>bouges aujourd’hui ?</Text>
+          </Text>
+
+          <Text style={styles.subtitle}>
+            Trouve des sportifs près de toi, selon ton sport, ton niveau et tes disponibilités.
+          </Text>
+
+          <TouchableOpacity style={styles.button} activeOpacity={0.85}>
+            <Text style={styles.buttonText}>Trouver un partenaire</Text>
+            <Text style={styles.arrow}>→</Text>
+          </TouchableOpacity>
+
+          <View style={styles.sportsSection}>
+            <Text style={styles.sportsTitle}>Choisis ton sport</Text>
+            <View style={styles.sportsList}>
+              {SPORTS.map((sport) => (
+                <TouchableOpacity key={sport} style={styles.sportChip} activeOpacity={0.85}>
+                  <Text style={styles.sportChipText}>{sport}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+
+          <View style={styles.profilesSection}>
+            <Text style={styles.sportsTitle}>Sportifs près de toi</Text>
+            <View style={styles.profilesList}>
+              {NEARBY_PROFILES.map((profile) => (
+                <TouchableOpacity key={profile.name} style={styles.profileCard} activeOpacity={0.85}>
+                  <View style={styles.profileAvatar}>
+                    <Text style={styles.profileAvatarText}>{profile.name.charAt(0)}</Text>
+                  </View>
+
+                  <View style={styles.profileInfo}>
+                    <Text style={styles.profileName}>
+                      {profile.name}, {profile.age} ans
+                    </Text>
+                    <Text style={styles.profileMeta}>
+                      {profile.sport} • {profile.level}
+                    </Text>
+                    <Text style={styles.profileDistance}>À {profile.distance}</Text>
+                  </View>
+
+                  <View style={styles.profileCta}>
+                    <Text style={styles.profileCtaText}>›</Text>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.bottom}>
+          <Text style={styles.bottomText}>SPORT • COMMUNAUTÉ • MARSEILLE</Text>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -55,6 +94,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#07111F',
     paddingHorizontal: 24,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 24,
   },
   header: {
     flexDirection: 'row',
@@ -157,6 +203,69 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 13,
     fontWeight: '700',
+  },
+  profilesSection: {
+    marginTop: 36,
+  },
+  profilesList: {
+    gap: 12,
+  },
+  profileCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#101D33',
+    borderWidth: 1,
+    borderColor: 'rgba(46, 125, 255, 0.4)',
+    borderRadius: 18,
+    padding: 14,
+  },
+  profileAvatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#2E7DFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 14,
+  },
+  profileAvatarText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: '800',
+  },
+  profileInfo: {
+    flex: 1,
+  },
+  profileName: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '800',
+  },
+  profileMeta: {
+    color: '#9CA9BA',
+    fontSize: 13,
+    fontWeight: '600',
+    marginTop: 3,
+  },
+  profileDistance: {
+    color: '#4D8DFF',
+    fontSize: 12,
+    fontWeight: '700',
+    marginTop: 3,
+  },
+  profileCta: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(46, 125, 255, 0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 10,
+  },
+  profileCtaText: {
+    color: '#4D8DFF',
+    fontSize: 18,
+    fontWeight: '900',
   },
   bottom: {
     alignItems: 'center',
