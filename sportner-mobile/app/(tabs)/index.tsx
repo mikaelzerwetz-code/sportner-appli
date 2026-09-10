@@ -1,4 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
+import { useMemo, useState } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 
 import { GamificationStrip } from '@/components/home/GamificationStrip';
@@ -8,21 +9,37 @@ import { NearbyPlayers } from '@/components/home/NearbyPlayers';
 import { NearbySessions } from '@/components/home/NearbySessions';
 import { NextSessionCard } from '@/components/home/NextSessionCard';
 import { PrimaryActions } from '@/components/home/PrimaryActions';
-import { TimeFilter } from '@/components/home/TimeFilter';
+import { TimeFilter, type TimeFilterState } from '@/components/home/TimeFilter';
 import { TodayForYou } from '@/components/home/TodayForYou';
 import { colors } from '@/constants/theme';
 import {
   CURRENT_USER,
   GAMIFICATION,
   MY_SPORTS,
-  NEARBY_PLAYERS,
   NEARBY_SESSIONS,
   NEXT_SESSION,
-  RECOMMENDED_SESSION,
-  TODAY_RECOMMENDATION,
+  RECOMMENDED_SESSION_BY_INTENT,
+  TODAY_RECOMMENDATION_BY_INTENT,
+  getPlayersForIntent,
 } from '@/lib/homeMockData';
+import { getTimeframeForIntent } from '@/lib/timeIntent';
+
+const DEFAULT_TIME_FILTER: TimeFilterState = { intent: 'now', customSelection: null };
 
 export default function HomeScreen() {
+  const [timeFilter, setTimeFilter] = useState<TimeFilterState>(DEFAULT_TIME_FILTER);
+
+  const nearbyPlayers = useMemo(() => getPlayersForIntent(timeFilter.intent), [timeFilter.intent]);
+
+  const sessionsTimeframe = useMemo(
+    () =>
+      getTimeframeForIntent(
+        timeFilter.intent,
+        timeFilter.customSelection ? new Date(timeFilter.customSelection.dateIso) : undefined
+      ),
+    [timeFilter.intent, timeFilter.customSelection]
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" />
@@ -34,12 +51,15 @@ export default function HomeScreen() {
       >
         <HomeHeader user={CURRENT_USER} />
         <PrimaryActions />
-        <TimeFilter />
+        <TimeFilter onChange={setTimeFilter} />
         {NEXT_SESSION ? <NextSessionCard session={NEXT_SESSION} /> : null}
         <MySports sports={MY_SPORTS} />
-        <TodayForYou recommendation={TODAY_RECOMMENDATION} session={RECOMMENDED_SESSION} />
-        <NearbyPlayers players={NEARBY_PLAYERS} />
-        <NearbySessions sessions={NEARBY_SESSIONS} />
+        <TodayForYou
+          recommendation={TODAY_RECOMMENDATION_BY_INTENT[timeFilter.intent]}
+          session={RECOMMENDED_SESSION_BY_INTENT[timeFilter.intent]}
+        />
+        <NearbyPlayers players={nearbyPlayers} />
+        <NearbySessions sessions={NEARBY_SESSIONS} initialFilter={sessionsTimeframe} />
         <GamificationStrip stats={GAMIFICATION} />
       </ScrollView>
     </SafeAreaView>
@@ -57,6 +77,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: 32,
+    paddingBottom: 24,
   },
 });

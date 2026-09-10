@@ -47,7 +47,7 @@ export function PrimaryActions() {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 18,
+    marginTop: 16,
   },
   primaryAction: {
     backgroundColor: colors.accent,

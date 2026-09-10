@@ -45,7 +45,7 @@ export function TodayForYou({ recommendation, session }: TodayForYouProps) {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 20,
+    marginTop: 16,
     gap: 8,
   },
   matchCard: {

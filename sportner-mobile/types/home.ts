@@ -85,3 +85,11 @@ export type GamificationStats = {
 };
 
 export type TimeIntent = 'now' | 'tonight' | 'tomorrow' | 'week' | 'custom';
+
+export type TimePeriod = 'morning' | 'afternoon' | 'evening';
+
+export type CustomTimeSelection = {
+  dateIso: string;
+  period: TimePeriod;
+  label: string;
+};

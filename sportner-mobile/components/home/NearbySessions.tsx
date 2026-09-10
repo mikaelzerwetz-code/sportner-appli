@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { SectionTitle } from '@/components/home/SectionTitle';
@@ -7,6 +7,8 @@ import type { NearbySession, SessionTimeframe } from '@/types/home';
 
 type NearbySessionsProps = {
   sessions: NearbySession[];
+  /** Case pré-sélectionnée d'après "Quand veux-tu bouger ?" ; l'utilisateur peut toujours choisir un autre filtre localement. */
+  initialFilter?: SessionTimeframe;
 };
 
 const FILTERS: { key: SessionTimeframe; label: string }[] = [
@@ -19,8 +21,13 @@ function formatDistance(distanceKm: number) {
   return distanceKm.toString().replace('.', ',');
 }
 
-export function NearbySessions({ sessions }: NearbySessionsProps) {
-  const [selectedFilter, setSelectedFilter] = useState<SessionTimeframe>('today');
+export function NearbySessions({ sessions, initialFilter = 'today' }: NearbySessionsProps) {
+  const [selectedFilter, setSelectedFilter] = useState<SessionTimeframe>(initialFilter);
+
+  useEffect(() => {
+    setSelectedFilter(initialFilter);
+  }, [initialFilter]);
+
   const filteredSessions = sessions.filter((session) => session.timeframe === selectedFilter);
 
   return (
@@ -72,7 +79,7 @@ export function NearbySessions({ sessions }: NearbySessionsProps) {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 20,
+    marginTop: 16,
   },
   filters: {
     flexDirection: 'row',

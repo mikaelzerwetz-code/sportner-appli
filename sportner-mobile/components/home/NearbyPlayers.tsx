@@ -49,7 +49,7 @@ export function NearbyPlayers({ players }: NearbyPlayersProps) {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 20,
+    marginTop: 16,
   },
   list: {
     gap: 8,

@@ -38,7 +38,7 @@ export function NextSessionCard({ session }: NextSessionCardProps) {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 20,
+    marginTop: 16,
   },
   label: {
     color: colors.textMuted,

@@ -5,6 +5,7 @@ import type {
   NearbySession,
   NextSessionSummary,
   RecommendedSession,
+  TimeIntent,
   TodayRecommendation,
   UserSportLevel,
 } from '@/types/home';
@@ -22,21 +23,26 @@ export const MY_SPORTS: UserSportLevel[] = [
   { sportId: 'fitness', sportName: 'Fitness', level: 6 },
 ];
 
-export const TODAY_RECOMMENDATION: TodayRecommendation = {
-  matchCount: 2,
-  sportName: 'padel',
-  availability: 'ce soir',
-  levelRange: '6–8',
-  maxDistanceKm: 5,
+/**
+ * Une recommandation et une session conseillée par intention temporelle,
+ * pour que "Quand veux-tu bouger ?" fasse visiblement varier "Pour toi
+ * aujourd'hui". Purement fictif (pas de vrai matching) : "custom" reprend
+ * le jeu "week" par défaut, quelle que soit la date précise choisie.
+ */
+export const TODAY_RECOMMENDATION_BY_INTENT: Record<TimeIntent, TodayRecommendation> = {
+  now: { matchCount: 2, sportName: 'padel', availability: 'maintenant', levelRange: '6–8', maxDistanceKm: 3 },
+  tonight: { matchCount: 2, sportName: 'padel', availability: 'ce soir', levelRange: '6–8', maxDistanceKm: 5 },
+  tomorrow: { matchCount: 3, sportName: 'running', availability: 'demain matin', levelRange: '4–6', maxDistanceKm: 4 },
+  week: { matchCount: 4, sportName: 'football', availability: 'cette semaine', levelRange: '5–7', maxDistanceKm: 6 },
+  custom: { matchCount: 4, sportName: 'football', availability: 'cette semaine', levelRange: '5–7', maxDistanceKm: 6 },
 };
 
-export const RECOMMENDED_SESSION: RecommendedSession = {
-  sportName: 'Padel',
-  day: 'ce soir',
-  time: '19h',
-  participants: '3/4 joueurs',
-  levelRange: '6–8',
-  place: 'Marseille 8e',
+export const RECOMMENDED_SESSION_BY_INTENT: Record<TimeIntent, RecommendedSession> = {
+  now: { sportName: 'Padel', day: 'maintenant', time: '18h00', participants: '3/4 joueurs', levelRange: '6–8', place: 'Padel Bocage' },
+  tonight: { sportName: 'Padel', day: 'ce soir', time: '19h', participants: '3/4 joueurs', levelRange: '6–8', place: 'Marseille 8e' },
+  tomorrow: { sportName: 'Running', day: 'demain', time: '8h00', participants: '4 participants', levelRange: 'Tous niveaux', place: 'Parc Borély' },
+  week: { sportName: 'Football', day: 'samedi', time: '11h00', participants: '8/10 joueurs', levelRange: '5–7', place: 'Plages du Prado' },
+  custom: { sportName: 'Football', day: 'samedi', time: '11h00', participants: '8/10 joueurs', levelRange: '5–7', place: 'Plages du Prado' },
 };
 
 export const NEARBY_PLAYERS: NearbyPlayer[] = [
@@ -44,6 +50,21 @@ export const NEARBY_PLAYERS: NearbyPlayer[] = [
   { id: 'sarah', name: 'Sarah', age: 22, sport: 'Running', level: 5, distanceKm: 2.1, availability: 'Disponible demain matin' },
   { id: 'mehdi', name: 'Mehdi', age: 26, sport: 'Football', level: 6, distanceKm: 3.4, availability: 'Disponible vendredi soir' },
 ];
+
+/** Ordre de priorité fictif des profils selon l'intention temporelle choisie. */
+const NEARBY_PLAYERS_PRIORITY_BY_INTENT: Record<TimeIntent, string[]> = {
+  now: ['lucas', 'mehdi', 'sarah'],
+  tonight: ['lucas', 'mehdi', 'sarah'],
+  tomorrow: ['sarah', 'lucas', 'mehdi'],
+  week: ['mehdi', 'sarah', 'lucas'],
+  custom: ['lucas', 'sarah', 'mehdi'],
+};
+
+export function getPlayersForIntent(intent: TimeIntent): NearbyPlayer[] {
+  return NEARBY_PLAYERS_PRIORITY_BY_INTENT[intent]
+    .map((id) => NEARBY_PLAYERS.find((player) => player.id === id))
+    .filter((player): player is NearbyPlayer => Boolean(player));
+}
 
 export const NEARBY_SESSIONS: NearbySession[] = [
   {

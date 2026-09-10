@@ -1,38 +1,50 @@
 import { useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+import { ChooseTimeModal } from '@/components/home/ChooseTimeModal';
 import { SectionTitle } from '@/components/home/SectionTitle';
 import { colors } from '@/constants/theme';
-import type { TimeIntent } from '@/types/home';
+import { TIME_INTENT_OPTIONS } from '@/lib/timeIntent';
+import type { CustomTimeSelection, TimeIntent } from '@/types/home';
 
-const TIME_OPTIONS: { key: TimeIntent; label: string }[] = [
-  { key: 'now', label: 'Maintenant' },
-  { key: 'tonight', label: 'Ce soir' },
-  { key: 'tomorrow', label: 'Demain' },
-  { key: 'week', label: 'Cette semaine' },
-  { key: 'custom', label: 'Choisir' },
-];
+export type TimeFilterState = {
+  intent: TimeIntent;
+  customSelection: CustomTimeSelection | null;
+};
 
-export function TimeFilter() {
+type TimeFilterProps = {
+  onChange?: (state: TimeFilterState) => void;
+};
+
+export function TimeFilter({ onChange }: TimeFilterProps) {
   const [selected, setSelected] = useState<TimeIntent>('now');
+  const [customSelection, setCustomSelection] = useState<CustomTimeSelection | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const applySelection = (intent: TimeIntent, selection: CustomTimeSelection | null) => {
+    setSelected(intent);
+    onChange?.({ intent, customSelection: intent === 'custom' ? selection : null });
+  };
 
   const handlePress = (key: TimeIntent) => {
-    setSelected(key);
     if (key === 'custom') {
-      Alert.alert('Bientôt disponible', 'Le choix d’une date précise arrive prochainement.');
+      setModalVisible(true);
+      return;
     }
+    applySelection(key, null);
+  };
+
+  const handleCustomConfirm = (selection: CustomTimeSelection) => {
+    setCustomSelection(selection);
+    applySelection('custom', selection);
   };
 
   return (
     <View style={styles.container}>
       <SectionTitle title="Quand veux-tu bouger ?" />
 
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.list}
-      >
-        {TIME_OPTIONS.map((option) => {
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.list}>
+        {TIME_INTENT_OPTIONS.map((option) => {
           const isActive = option.key === selected;
           return (
             <TouchableOpacity
@@ -46,13 +58,29 @@ export function TimeFilter() {
           );
         })}
       </ScrollView>
+
+      {selected === 'custom' && customSelection ? (
+        <TouchableOpacity
+          style={styles.customSummary}
+          activeOpacity={0.7}
+          onPress={() => setModalVisible(true)}
+        >
+          <Text style={styles.customSummaryText}>📅 {customSelection.label}</Text>
+        </TouchableOpacity>
+      ) : null}
+
+      <ChooseTimeModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onConfirm={handleCustomConfirm}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 20,
+    marginTop: 16,
   },
   list: {
     gap: 8,
@@ -77,5 +105,14 @@ const styles = StyleSheet.create({
   },
   chipTextActive: {
     color: colors.text,
+  },
+  customSummary: {
+    alignSelf: 'flex-start',
+    marginTop: 8,
+  },
+  customSummaryText: {
+    color: colors.accentSoft,
+    fontSize: 12.5,
+    fontWeight: '700',
   },
 });

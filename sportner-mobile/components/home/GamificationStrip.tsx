@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     paddingHorizontal: 14,
     paddingVertical: 10,
-    marginTop: 20,
+    marginTop: 16,
   },
   streak: {
     color: colors.text,
