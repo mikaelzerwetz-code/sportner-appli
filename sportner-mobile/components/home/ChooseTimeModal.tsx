@@ -2,7 +2,19 @@ import { useState } from 'react';
 import { Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { colors } from '@/constants/theme';
-import { TIME_PERIODS, formatDateListLabel, formatFullDateLabel, getUpcomingDays } from '@/lib/timeIntent';
+import {
+  CALENDAR_WEEKDAY_LETTERS,
+  TIME_PERIODS,
+  TIME_SLOTS_BY_PERIOD,
+  formatMonthLabel,
+  formatPreciseTime,
+  formatShortDateLabel,
+  getMonthGrid,
+  isPastDay,
+  isSameDay,
+  isSameMonth,
+  startOfDay,
+} from '@/lib/timeIntent';
 import type { CustomTimeSelection, TimePeriod } from '@/types/home';
 
 type ChooseTimeModalProps = {
@@ -11,35 +23,72 @@ type ChooseTimeModalProps = {
   onConfirm: (selection: CustomTimeSelection) => void;
 };
 
-// Uniquement des jours à partir d'aujourd'hui : aucune date passée n'est jamais proposée.
-const UPCOMING_DAYS = getUpcomingDays(14);
+function currentMonth() {
+  const today = startOfDay(new Date());
+  return new Date(today.getFullYear(), today.getMonth(), 1);
+}
 
 export function ChooseTimeModal({ visible, onClose, onConfirm }: ChooseTimeModalProps) {
+  const [viewedMonth, setViewedMonth] = useState<Date>(currentMonth);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedPeriod, setSelectedPeriod] = useState<TimePeriod | null>(null);
+  const [selectedPreciseTime, setSelectedPreciseTime] = useState<string | null>(null);
 
-  const handleClose = () => {
+  const isViewingCurrentMonth = isSameMonth(viewedMonth, currentMonth());
+
+  const resetState = () => {
+    setViewedMonth(currentMonth());
     setSelectedDate(null);
     setSelectedPeriod(null);
+    setSelectedPreciseTime(null);
+  };
+
+  const handleClose = () => {
+    resetState();
     onClose();
   };
 
+  const handlePrevMonth = () => {
+    if (isViewingCurrentMonth) return;
+    setViewedMonth((month) => new Date(month.getFullYear(), month.getMonth() - 1, 1));
+  };
+
+  const handleNextMonth = () => {
+    setViewedMonth((month) => new Date(month.getFullYear(), month.getMonth() + 1, 1));
+  };
+
+  const handleSelectDate = (date: Date) => {
+    setSelectedDate(date);
+    setSelectedPeriod(null);
+    setSelectedPreciseTime(null);
+  };
+
+  const handleSelectPeriod = (period: TimePeriod) => {
+    setSelectedPeriod(period);
+    setSelectedPreciseTime(null);
+  };
+
+  const handleSelectPreciseTime = (time: string) => {
+    setSelectedPreciseTime((current) => (current === time ? null : time));
+  };
+
   const handleConfirm = () => {
-    if (!selectedDate || !selectedPeriod) {
-      return;
-    }
+    if (!selectedDate || !selectedPeriod) return;
     const period = TIME_PERIODS.find((item) => item.key === selectedPeriod);
-    if (!period) {
-      return;
-    }
+    if (!period) return;
+
+    const timeLabel = selectedPreciseTime ? formatPreciseTime(selectedPreciseTime) : period.time;
 
     onConfirm({
       dateIso: selectedDate.toISOString(),
       period: selectedPeriod,
-      label: `${formatFullDateLabel(selectedDate)} · ${period.time}`,
+      preciseTime: selectedPreciseTime ?? undefined,
+      label: `${formatShortDateLabel(selectedDate)} · ${timeLabel}`,
     });
-    handleClose();
+    resetState();
   };
+
+  const today = new Date();
 
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={handleClose}>
@@ -52,56 +101,136 @@ export function ChooseTimeModal({ visible, onClose, onConfirm }: ChooseTimeModal
             </TouchableOpacity>
           </View>
 
-          <Text style={styles.label}>Date</Text>
-          <ScrollView style={styles.dateList} showsVerticalScrollIndicator={false}>
-            {UPCOMING_DAYS.map((date) => {
-              const isSelected = selectedDate?.toDateString() === date.toDateString();
-              return (
-                <TouchableOpacity
-                  key={date.toISOString()}
-                  style={[styles.dateRow, isSelected && styles.dateRowSelected]}
-                  activeOpacity={0.8}
-                  onPress={() => setSelectedDate(date)}
-                >
-                  <Text style={[styles.dateRowText, isSelected && styles.dateRowTextSelected]}>
-                    {formatDateListLabel(date)}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <Text style={styles.label}>Date</Text>
 
-          {selectedDate ? (
-            <>
-              <Text style={styles.label}>Créneau</Text>
-              <View style={styles.periods}>
-                {TIME_PERIODS.map((period) => {
-                  const isSelected = period.key === selectedPeriod;
+            <View style={styles.calendarHeader}>
+              <TouchableOpacity
+                style={[styles.navButton, isViewingCurrentMonth && styles.navButtonDisabled]}
+                activeOpacity={0.7}
+                disabled={isViewingCurrentMonth}
+                onPress={handlePrevMonth}
+              >
+                <Text style={styles.navButtonText}>‹</Text>
+              </TouchableOpacity>
+
+              <Text style={styles.monthLabel}>{formatMonthLabel(viewedMonth)}</Text>
+
+              <TouchableOpacity style={styles.navButton} activeOpacity={0.7} onPress={handleNextMonth}>
+                <Text style={styles.navButtonText}>›</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.weekdaysRow}>
+              {CALENDAR_WEEKDAY_LETTERS.map((letter, index) => (
+                <Text key={`${letter}-${index}`} style={styles.weekdayLabel}>
+                  {letter}
+                </Text>
+              ))}
+            </View>
+
+            {getMonthGrid(viewedMonth).map((week, weekIndex) => (
+              <View key={weekIndex} style={styles.weekRow}>
+                {week.map((date, dayIndex) => {
+                  if (!date) {
+                    return <View key={dayIndex} style={styles.dayCell} />;
+                  }
+
+                  const disabled = isPastDay(date);
+                  const isSelected = Boolean(selectedDate && isSameDay(date, selectedDate));
+                  const isToday = isSameDay(date, today);
+
                   return (
                     <TouchableOpacity
-                      key={period.key}
-                      style={[styles.periodChip, isSelected && styles.periodChipSelected]}
-                      activeOpacity={0.8}
-                      onPress={() => setSelectedPeriod(period.key)}
+                      key={dayIndex}
+                      style={styles.dayCell}
+                      activeOpacity={0.7}
+                      disabled={disabled}
+                      onPress={() => handleSelectDate(date)}
                     >
-                      <Text style={[styles.periodChipText, isSelected && styles.periodChipTextSelected]}>
-                        {period.label}
-                      </Text>
+                      <View
+                        style={[
+                          styles.dayCircle,
+                          isSelected && styles.dayCircleSelected,
+                          isToday && !isSelected && styles.dayCircleToday,
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            styles.dayText,
+                            disabled && styles.dayTextDisabled,
+                            isSelected && styles.dayTextSelected,
+                          ]}
+                        >
+                          {date.getDate()}
+                        </Text>
+                      </View>
                     </TouchableOpacity>
                   );
                 })}
               </View>
-            </>
-          ) : null}
+            ))}
 
-          <TouchableOpacity
-            style={[styles.confirmButton, (!selectedDate || !selectedPeriod) && styles.confirmButtonDisabled]}
-            activeOpacity={0.85}
-            disabled={!selectedDate || !selectedPeriod}
-            onPress={handleConfirm}
-          >
-            <Text style={styles.confirmButtonText}>Valider</Text>
-          </TouchableOpacity>
+            {selectedDate ? (
+              <>
+                <Text style={styles.label}>Créneau</Text>
+                <View style={styles.periods}>
+                  {TIME_PERIODS.map((period) => {
+                    const isSelected = period.key === selectedPeriod;
+                    return (
+                      <TouchableOpacity
+                        key={period.key}
+                        style={[styles.periodChip, isSelected && styles.periodChipSelected]}
+                        activeOpacity={0.8}
+                        onPress={() => handleSelectPeriod(period.key)}
+                      >
+                        <Text style={[styles.periodChipText, isSelected && styles.periodChipTextSelected]}>
+                          {period.label}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              </>
+            ) : null}
+
+            {selectedPeriod ? (
+              <>
+                <Text style={styles.label}>Heure précise (optionnel)</Text>
+                <View style={styles.timeSlots}>
+                  {TIME_SLOTS_BY_PERIOD[selectedPeriod].map((time) => {
+                    const isSelected = time === selectedPreciseTime;
+                    return (
+                      <TouchableOpacity
+                        key={time}
+                        style={[styles.timeSlotChip, isSelected && styles.timeSlotChipSelected]}
+                        activeOpacity={0.8}
+                        onPress={() => handleSelectPreciseTime(time)}
+                      >
+                        <Text
+                          style={[styles.timeSlotChipText, isSelected && styles.timeSlotChipTextSelected]}
+                        >
+                          {formatPreciseTime(time)}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              </>
+            ) : null}
+
+            <TouchableOpacity
+              style={[
+                styles.confirmButton,
+                (!selectedDate || !selectedPeriod) && styles.confirmButtonDisabled,
+              ]}
+              activeOpacity={0.85}
+              disabled={!selectedDate || !selectedPeriod}
+              onPress={handleConfirm}
+            >
+              <Text style={styles.confirmButtonText}>Valider</Text>
+            </TouchableOpacity>
+          </ScrollView>
         </View>
       </View>
     </Modal>
@@ -115,7 +244,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   sheet: {
-    maxHeight: '82%',
+    maxHeight: '86%',
     backgroundColor: colors.background,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
@@ -124,7 +253,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
     paddingHorizontal: 20,
     paddingTop: 16,
-    paddingBottom: 28,
+    paddingBottom: 24,
   },
   header: {
     flexDirection: 'row',
@@ -162,35 +291,85 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     marginTop: 4,
   },
-  dateList: {
-    maxHeight: 230,
+  calendarHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
   },
-  dateRow: {
+  navButton: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 14,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    marginBottom: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  dateRowSelected: {
-    borderColor: colors.accent,
-    backgroundColor: 'rgba(46, 125, 255, 0.12)',
+  navButtonDisabled: {
+    opacity: 0.3,
   },
-  dateRowText: {
+  navButtonText: {
+    color: colors.text,
+    fontSize: 16,
+    fontWeight: '800',
+  },
+  monthLabel: {
     color: colors.text,
     fontSize: 14,
+    fontWeight: '800',
+  },
+  weekdaysRow: {
+    flexDirection: 'row',
+    marginBottom: 4,
+  },
+  weekdayLabel: {
+    flex: 1,
+    textAlign: 'center',
+    color: colors.textDim,
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  weekRow: {
+    flexDirection: 'row',
+  },
+  dayCell: {
+    flex: 1,
+    aspectRatio: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dayCircle: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dayCircleSelected: {
+    backgroundColor: colors.accent,
+  },
+  dayCircleToday: {
+    borderWidth: 1,
+    borderColor: colors.accent,
+  },
+  dayText: {
+    color: colors.text,
+    fontSize: 13,
     fontWeight: '600',
   },
-  dateRowTextSelected: {
-    color: colors.accentSoft,
+  dayTextDisabled: {
+    color: colors.textDim,
+  },
+  dayTextSelected: {
+    color: colors.text,
     fontWeight: '800',
   },
   periods: {
     flexDirection: 'row',
     gap: 8,
-    marginTop: 2,
+    marginTop: 10,
   },
   periodChip: {
     flex: 1,
@@ -213,12 +392,38 @@ const styles = StyleSheet.create({
   periodChipTextSelected: {
     color: colors.text,
   },
+  timeSlots: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 10,
+  },
+  timeSlotChip: {
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 12,
+    paddingHorizontal: 13,
+    paddingVertical: 8,
+  },
+  timeSlotChipSelected: {
+    backgroundColor: colors.accent,
+    borderColor: colors.accent,
+  },
+  timeSlotChipText: {
+    color: colors.textMuted,
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  timeSlotChipTextSelected: {
+    color: colors.text,
+  },
   confirmButton: {
     backgroundColor: colors.accent,
     borderRadius: 14,
     paddingVertical: 14,
     alignItems: 'center',
-    marginTop: 18,
+    marginTop: 20,
   },
   confirmButtonDisabled: {
     opacity: 0.4,

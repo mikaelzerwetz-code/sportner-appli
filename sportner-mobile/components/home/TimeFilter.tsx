@@ -46,6 +46,9 @@ export function TimeFilter({ onChange }: TimeFilterProps) {
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.list}>
         {TIME_INTENT_OPTIONS.map((option) => {
           const isActive = option.key === selected;
+          const isCustomWithSelection = option.key === 'custom' && Boolean(customSelection);
+          const label = isCustomWithSelection && customSelection ? customSelection.label : option.label;
+
           return (
             <TouchableOpacity
               key={option.key}
@@ -53,21 +56,11 @@ export function TimeFilter({ onChange }: TimeFilterProps) {
               activeOpacity={0.8}
               onPress={() => handlePress(option.key)}
             >
-              <Text style={[styles.chipText, isActive && styles.chipTextActive]}>{option.label}</Text>
+              <Text style={[styles.chipText, isActive && styles.chipTextActive]}>{label}</Text>
             </TouchableOpacity>
           );
         })}
       </ScrollView>
-
-      {selected === 'custom' && customSelection ? (
-        <TouchableOpacity
-          style={styles.customSummary}
-          activeOpacity={0.7}
-          onPress={() => setModalVisible(true)}
-        >
-          <Text style={styles.customSummaryText}>📅 {customSelection.label}</Text>
-        </TouchableOpacity>
-      ) : null}
 
       <ChooseTimeModal
         visible={modalVisible}
@@ -105,14 +98,5 @@ const styles = StyleSheet.create({
   },
   chipTextActive: {
     color: colors.text,
-  },
-  customSummary: {
-    alignSelf: 'flex-start',
-    marginTop: 8,
-  },
-  customSummaryText: {
-    color: colors.accentSoft,
-    fontSize: 12.5,
-    fontWeight: '700',
   },
 });

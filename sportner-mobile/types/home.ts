@@ -91,5 +91,8 @@ export type TimePeriod = 'morning' | 'afternoon' | 'evening';
 export type CustomTimeSelection = {
   dateIso: string;
   period: TimePeriod;
+  /** Heure précise "HH:MM" facultative, en plus du créneau (Matin/Après-midi/Soir). */
+  preciseTime?: string;
+  /** Version courte affichée à la place du chip "Choisir", ex. "Sam. 19 · 19h30". */
   label: string;
 };

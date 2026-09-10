@@ -14,23 +14,34 @@ export const TIME_PERIODS: { key: TimePeriod; label: string; time: string }[] = 
   { key: 'evening', label: 'Soir', time: '18h30' },
 ];
 
-const WEEKDAYS = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+/** Créneaux horaires précis proposés une fois un moment de la journée choisi. */
+export const TIME_SLOTS_BY_PERIOD: Record<TimePeriod, string[]> = {
+  morning: ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30'],
+  afternoon: ['13:00', '13:30', '14:00', '14:30', '15:00', '15:30'],
+  evening: ['18:00', '18:30', '19:00', '19:30', '20:00', '20:30'],
+};
+
+const WEEKDAYS_SHORT = ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'];
+const WEEKDAY_LETTERS = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
 const MONTHS = [
-  'janvier',
-  'février',
-  'mars',
-  'avril',
-  'mai',
-  'juin',
-  'juillet',
-  'août',
-  'septembre',
-  'octobre',
-  'novembre',
-  'décembre',
+  'Janvier',
+  'Février',
+  'Mars',
+  'Avril',
+  'Mai',
+  'Juin',
+  'Juillet',
+  'Août',
+  'Septembre',
+  'Octobre',
+  'Novembre',
+  'Décembre',
 ];
 
-function startOfDay(date: Date) {
+/** Initiales des jours de la semaine (lundi en premier), pour l'en-tête du calendrier. */
+export const CALENDAR_WEEKDAY_LETTERS = WEEKDAY_LETTERS;
+
+export function startOfDay(date: Date): Date {
   const copy = new Date(date);
   copy.setHours(0, 0, 0, 0);
   return copy;
@@ -41,27 +52,60 @@ function diffInDays(from: Date, to: Date) {
   return Math.round((startOfDay(to).getTime() - startOfDay(from).getTime()) / oneDayMs);
 }
 
-/** Nom complet du jour, ex. "Samedi 19 septembre" — utilisé une fois la date validée. */
-export function formatFullDateLabel(date: Date): string {
-  return `${WEEKDAYS[date.getDay()]} ${date.getDate()} ${MONTHS[date.getMonth()]}`;
+export function isSameDay(a: Date, b: Date): boolean {
+  return diffInDays(a, b) === 0;
 }
 
-/** Libellé court pour la liste de sélection : "Aujourd’hui", "Demain", ou le nom complet. */
-export function formatDateListLabel(date: Date): string {
-  const diff = diffInDays(new Date(), date);
-  if (diff === 0) return 'Aujourd’hui';
-  if (diff === 1) return 'Demain';
-  return formatFullDateLabel(date);
+export function isPastDay(date: Date): boolean {
+  return diffInDays(new Date(), date) < 0;
 }
 
-/** Les prochains jours à partir d'aujourd'hui — empêche par construction toute date passée. */
-export function getUpcomingDays(count: number): Date[] {
-  const today = startOfDay(new Date());
-  return Array.from({ length: count }, (_, index) => {
-    const date = new Date(today);
-    date.setDate(date.getDate() + index);
-    return date;
-  });
+/** "Sam. 19" — utilisé pour le chip compact une fois la sélection validée. */
+export function formatShortDateLabel(date: Date): string {
+  return `${WEEKDAYS_SHORT[date.getDay()]} ${date.getDate()}`;
+}
+
+/** "Septembre 2026" — en-tête du calendrier mensuel. */
+export function formatMonthLabel(date: Date): string {
+  return `${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
+}
+
+/** "19:30" -> "19h30", pour rester cohérent avec le reste de l'app. */
+export function formatPreciseTime(time: string): string {
+  return time.replace(':', 'h');
+}
+
+/**
+ * Grille du mois (semaines de 7 jours, lundi en premier). Les cases hors
+ * mois sont `null` — le nombre de lignes s'adapte donc au mois affiché.
+ */
+export function getMonthGrid(viewedMonth: Date): (Date | null)[][] {
+  const year = viewedMonth.getFullYear();
+  const month = viewedMonth.getMonth();
+  const firstOfMonth = new Date(year, month, 1);
+  const firstWeekday = (firstOfMonth.getDay() + 6) % 7; // 0 = lundi
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  const cells: (Date | null)[] = [];
+  for (let i = 0; i < firstWeekday; i += 1) {
+    cells.push(null);
+  }
+  for (let day = 1; day <= daysInMonth; day += 1) {
+    cells.push(new Date(year, month, day));
+  }
+  while (cells.length % 7 !== 0) {
+    cells.push(null);
+  }
+
+  const weeks: (Date | null)[][] = [];
+  for (let i = 0; i < cells.length; i += 7) {
+    weeks.push(cells.slice(i, i + 7));
+  }
+  return weeks;
+}
+
+export function isSameMonth(a: Date, b: Date): boolean {
+  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth();
 }
 
 /**
