@@ -1,126 +1,172 @@
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image, StyleSheet, Text, TouchableOpacity, View, type ImageSourcePropType } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { brand } from '@/constants/brand';
+import type { CurrentUser } from '@/types/home';
 
 type HeroCardProps = {
+  user: CurrentUser;
   /**
    * Passe un vrai asset (ex. require('@/assets/images/hero.jpg')) quand la
    * photo lifestyle définitive est prête : un seul prop à fournir, rien
    * d'autre à changer dans ce composant. Sans image, un dégradé sombre sert
-   * de placeholder (impossible de récupérer une vraie photo depuis cet
-   * environnement de build : l'accès réseau externe y est bloqué).
+   * de placeholder.
    */
   imageSource?: ImageSourcePropType;
 };
 
-export function HeroCard({ imageSource }: HeroCardProps) {
+function getGreeting() {
+  const hour = new Date().getHours();
+  return hour < 18 ? 'Bonjour' : 'Bonsoir';
+}
+
+/**
+ * hero-home.png fait 1672x941 (aspect ~1.78, très panoramique). À cette
+ * hauteur, resizeMode="cover" centre son crop horizontalement (aucun crop
+ * vertical : la hauteur devient le facteur limitant) — le groupe entier
+ * reste visible avec seulement les bords légèrement rognés. Une hauteur plus
+ * grande recadrerait davantage les côtés ; on reste volontairement ici pour
+ * éviter un zoom excessif tout en donnant une Hero immersive.
+ */
+const HERO_HEIGHT = 320;
+
+export function HeroCard({ user, imageSource }: HeroCardProps) {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   return (
-    <View style={styles.wrapper}>
-      <View style={styles.imageBlock}>
-        {imageSource ? (
-          <Image source={imageSource} style={styles.heroImage} resizeMode="cover" />
-        ) : (
-          <LinearGradient
-            colors={['#3A3A34', '#1C1C18', '#0A0A0A']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={StyleSheet.absoluteFill}
-          />
-        )}
-
+    <View style={styles.imageBlock}>
+      {imageSource ? (
+        <Image source={imageSource} style={StyleSheet.absoluteFill} resizeMode="cover" />
+      ) : (
         <LinearGradient
-          colors={['transparent', 'rgba(0,0,0,0.55)']}
-          style={styles.gradient}
-          pointerEvents="none"
+          colors={['#3A3A34', '#1C1C18', '#0A0A0A']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={StyleSheet.absoluteFill}
         />
+      )}
 
-        <View style={styles.textBlock}>
-          <Text style={styles.headline}>
-            Avec qui{'\n'}tu bouges{'\n'}
-            <Text style={styles.headlineAccent}>aujourd’hui ?</Text>
+      <LinearGradient
+        colors={['rgba(0,0,0,0.45)', 'transparent']}
+        style={styles.topGradient}
+        pointerEvents="none"
+      />
+      <LinearGradient
+        colors={['transparent', 'rgba(0,0,0,0.68)']}
+        style={styles.bottomGradient}
+        pointerEvents="none"
+      />
+
+      <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
+        <View>
+          <Text style={styles.greeting}>
+            {getGreeting()} {user.firstName} 👋
           </Text>
+          <Text style={styles.location}>📍 {user.city}</Text>
         </View>
+
+        <TouchableOpacity style={styles.notifButton} activeOpacity={0.7}>
+          <Text style={styles.notifIcon}>🔔</Text>
+        </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.cta} activeOpacity={0.85} onPress={() => router.push('/decouvrir')}>
-        <Text style={styles.ctaText}>Trouver un partenaire</Text>
-        <Text style={styles.ctaArrow}>→</Text>
-      </TouchableOpacity>
+      <View style={styles.bottomContent}>
+        <Text style={styles.headline}>
+          Avec qui{'\n'}tu bouges{'\n'}
+          <Text style={styles.headlineAccent}>aujourd’hui ?</Text>
+        </Text>
+
+        <TouchableOpacity style={styles.cta} activeOpacity={0.85} onPress={() => router.push('/decouvrir')}>
+          <Text style={styles.ctaText}>Trouver un partenaire →</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
-    marginTop: 14,
-  },
   imageBlock: {
-    height: 195,
-    borderRadius: 26,
+    height: HERO_HEIGHT,
     overflow: 'hidden',
     backgroundColor: brand.black,
+    borderBottomLeftRadius: 28,
+    borderBottomRightRadius: 28,
   },
-  /**
-   * Le composant Image de React Native n'a pas d'équivalent natif à
-   * `objectPosition`/`contentPosition` : resizeMode="cover" seul centre
-   * toujours son cadrage. Avec cette photo (beaucoup de ciel en haut, le
-   * groupe au centre/bas), un centrage strict masque le groupe derrière du
-   * ciel. On agrandit donc l'image au-delà du cadre (hauteur > 195) puis on
-   * la remonte (top négatif) dans le conteneur `overflow: hidden` : la
-   * fenêtre visible se déplace ainsi vers le bas/centre de la photo, sans
-   * toucher aux dimensions de la Hero Card ni à la position du texte.
-   */
-  heroImage: {
+  topGradient: {
     position: 'absolute',
     left: 0,
     right: 0,
-    top: -49,
-    height: 244,
+    top: 0,
+    height: '32%',
   },
-  gradient: {
+  bottomGradient: {
     position: 'absolute',
     left: 0,
     right: 0,
     bottom: 0,
     height: '55%',
   },
-  textBlock: {
+  header: {
     position: 'absolute',
-    left: 18,
-    right: 18,
-    bottom: 16,
+    left: 0,
+    right: 0,
+    top: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    paddingHorizontal: 20,
+  },
+  greeting: {
+    color: '#FFFFFF',
+    fontSize: 17,
+    fontWeight: '800',
+  },
+  location: {
+    color: 'rgba(255,255,255,0.85)',
+    fontSize: 11.5,
+    fontWeight: '600',
+    marginTop: 3,
+  },
+  notifButton: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  notifIcon: {
+    fontSize: 15,
+  },
+  bottomContent: {
+    position: 'absolute',
+    left: 20,
+    right: 20,
+    bottom: 22,
   },
   headline: {
     color: '#FFFFFF',
-    fontSize: 23,
-    fontWeight: '800',
-    lineHeight: 26,
+    fontSize: 30,
+    fontWeight: '900',
+    lineHeight: 33,
   },
   headlineAccent: {
     color: brand.accent,
   },
   cta: {
     backgroundColor: brand.accent,
-    borderRadius: 16,
-    marginTop: 10,
-    paddingVertical: 13,
-    paddingHorizontal: 18,
-    flexDirection: 'row',
+    borderRadius: 24,
+    marginTop: 16,
+    paddingVertical: 15,
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
   },
   ctaText: {
     color: brand.black,
-    fontSize: 14,
-    fontWeight: '800',
-  },
-  ctaArrow: {
-    color: brand.black,
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: '800',
   },
 });

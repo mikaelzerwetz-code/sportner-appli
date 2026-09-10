@@ -14,8 +14,10 @@ export function QuickActionCards() {
         activeOpacity={0.85}
         onPress={() => showComingSoon('Créer une session')}
       >
-        <Text style={styles.icon}>＋</Text>
-        <Text style={styles.label}>Créer une session</Text>
+        <View style={[styles.iconCircle, styles.iconCircleAccent]}>
+          <Text style={styles.iconAccentText}>+</Text>
+        </View>
+        <Text style={styles.label}>Créer{'\n'}une session</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -23,8 +25,10 @@ export function QuickActionCards() {
         activeOpacity={0.85}
         onPress={() => showComingSoon('Rejoindre une session')}
       >
-        <Text style={styles.icon}>⌕</Text>
-        <Text style={styles.label}>Rejoindre une session</Text>
+        <View style={[styles.iconCircle, styles.iconCircleMuted]}>
+          <Text style={styles.iconMutedText}>⌕</Text>
+        </View>
+        <Text style={styles.label}>Rejoindre{'\n'}une session</Text>
       </TouchableOpacity>
     </View>
   );
@@ -34,31 +38,52 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     gap: 10,
-    marginTop: 12,
+    marginTop: 16,
   },
   card: {
     flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: brand.surface,
-    borderRadius: 16,
+    borderRadius: 20,
     paddingVertical: 12,
     paddingHorizontal: 12,
-    borderWidth: 1,
-    borderColor: brand.border,
+    gap: 10,
     shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 1,
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 2,
   },
-  icon: {
+  iconCircle: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  iconCircleAccent: {
+    backgroundColor: brand.accent,
+  },
+  iconCircleMuted: {
+    backgroundColor: brand.surfaceMuted,
+  },
+  iconAccentText: {
+    color: brand.black,
     fontSize: 18,
-    color: brand.text,
-    fontWeight: '700',
-    marginBottom: 6,
+    fontWeight: '800',
+    lineHeight: 20,
+  },
+  iconMutedText: {
+    color: brand.black,
+    fontSize: 15,
+    fontWeight: '800',
   },
   label: {
+    flex: 1,
     fontSize: 12.5,
     fontWeight: '800',
     color: brand.text,
+    lineHeight: 16,
   },
 });

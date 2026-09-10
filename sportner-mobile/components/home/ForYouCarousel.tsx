@@ -75,9 +75,9 @@ const styles = StyleSheet.create({
     fontWeight: '900',
   },
   link: {
-    color: brand.textMuted,
+    color: brand.accent,
     fontSize: 12.5,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   list: {
     gap: 10,
