@@ -27,8 +27,9 @@ export function ForYouCarousel({ players }: ForYouCarouselProps) {
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.list}>
         {players.map((player) => (
           <View key={player.id} style={styles.card}>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>{player.name.charAt(0)}</Text>
+            {/* Zone photo : remplacer par <Image source={...} /> quand de vraies photos de profil seront disponibles. */}
+            <View style={styles.photo}>
+              <Text style={styles.photoInitial}>{player.name.charAt(0)}</Text>
             </View>
 
             <Text style={styles.name}>{player.name}</Text>
@@ -50,7 +51,7 @@ export function ForYouCarousel({ players }: ForYouCarouselProps) {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 20,
+    marginTop: 16,
   },
   header: {
     flexDirection: 'row',
@@ -73,30 +74,30 @@ const styles = StyleSheet.create({
     paddingRight: 8,
   },
   card: {
-    width: 132,
+    width: 130,
     backgroundColor: brand.surface,
     borderRadius: 18,
     borderWidth: 1,
     borderColor: brand.border,
-    padding: 12,
+    padding: 10,
     shadowColor: '#000',
     shadowOpacity: 0.05,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 3 },
     elevation: 1,
   },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+  photo: {
+    width: '100%',
+    height: 76,
+    borderRadius: 14,
     backgroundColor: brand.surfaceMuted,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 8,
   },
-  avatarText: {
-    color: brand.text,
-    fontSize: 15,
+  photoInitial: {
+    color: brand.textMuted,
+    fontSize: 22,
     fontWeight: '800',
   },
   name: {

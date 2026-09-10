@@ -7,9 +7,10 @@ import { brand } from '@/constants/brand';
 type HeroCardProps = {
   /**
    * Passe un vrai asset (ex. require('@/assets/images/hero.jpg')) quand la
-   * photo lifestyle définitive est prête. Sans image, un fond sombre uni
-   * tient lieu de placeholder — le dégradé reste appliqué pour valider le
-   * rendu final dès maintenant.
+   * photo lifestyle définitive est prête : un seul prop à fournir, rien
+   * d'autre à changer dans ce composant. Sans image, un dégradé sombre sert
+   * de placeholder (impossible de récupérer une vraie photo depuis cet
+   * environnement de build : l'accès réseau externe y est bloqué).
    */
   imageSource?: ImageSourcePropType;
 };
@@ -20,13 +21,19 @@ export function HeroCard({ imageSource }: HeroCardProps) {
   return (
     <View style={styles.wrapper}>
       <View style={styles.imageBlock}>
-        <View style={styles.imagePlaceholder} />
         {imageSource ? (
           <Image source={imageSource} style={StyleSheet.absoluteFill} resizeMode="cover" />
-        ) : null}
+        ) : (
+          <LinearGradient
+            colors={['#3A3A34', '#1C1C18', '#0A0A0A']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={StyleSheet.absoluteFill}
+          />
+        )}
 
         <LinearGradient
-          colors={['transparent', 'rgba(0,0,0,0.6)']}
+          colors={['transparent', 'rgba(0,0,0,0.55)']}
           style={styles.gradient}
           pointerEvents="none"
         />
@@ -49,62 +56,54 @@ export function HeroCard({ imageSource }: HeroCardProps) {
 
 const styles = StyleSheet.create({
   wrapper: {
-    marginTop: 18,
+    marginTop: 14,
   },
   imageBlock: {
-    height: 250,
-    borderRadius: 28,
+    height: 195,
+    borderRadius: 26,
     overflow: 'hidden',
     backgroundColor: brand.black,
-  },
-  imagePlaceholder: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: '#1C1C1C',
   },
   gradient: {
     position: 'absolute',
     left: 0,
     right: 0,
     bottom: 0,
-    height: '65%',
+    height: '55%',
   },
   textBlock: {
     position: 'absolute',
-    left: 20,
-    right: 20,
-    bottom: 20,
+    left: 18,
+    right: 18,
+    bottom: 16,
   },
   headline: {
     color: '#FFFFFF',
-    fontSize: 28,
+    fontSize: 23,
     fontWeight: '800',
-    lineHeight: 32,
+    lineHeight: 26,
   },
   headlineAccent: {
     color: brand.accent,
   },
   cta: {
     backgroundColor: brand.accent,
-    borderRadius: 18,
-    marginTop: 12,
-    paddingVertical: 16,
-    paddingHorizontal: 20,
+    borderRadius: 16,
+    marginTop: 10,
+    paddingVertical: 13,
+    paddingHorizontal: 18,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
   ctaText: {
     color: brand.black,
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '800',
   },
   ctaArrow: {
     color: brand.black,
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '800',
   },
 });
