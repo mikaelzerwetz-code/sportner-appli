@@ -9,6 +9,36 @@ const NEARBY_PROFILES = [
   { name: 'Mehdi', age: 26, sport: 'Football', level: 'Avancé', distance: '3,4 km' },
 ] as const;
 
+const NEARBY_SESSIONS = [
+  {
+    sport: 'Padel',
+    format: 'Recherche 2 joueurs',
+    day: 'Aujourd’hui',
+    time: '19h00',
+    place: 'Padel Bocage',
+    level: 'Niveau intermédiaire',
+    slots: '2/4 joueurs',
+  },
+  {
+    sport: 'Running',
+    format: '5 km',
+    day: 'Demain',
+    time: '18h30',
+    place: 'Parc Borély',
+    level: 'Tous niveaux',
+    slots: '4 participants',
+  },
+  {
+    sport: 'Football',
+    format: 'Five',
+    day: 'Vendredi',
+    time: '20h00',
+    place: 'Marseille 8e',
+    level: 'Niveau intermédiaire',
+    slots: '7/10 joueurs',
+  },
+] as const;
+
 export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
@@ -76,6 +106,34 @@ export default function HomeScreen() {
                     <Text style={styles.profileCtaText}>›</Text>
                   </View>
                 </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+
+          <View style={styles.sessionsSection}>
+            <Text style={styles.sportsTitle}>Sessions près de toi</Text>
+            <View style={styles.sessionsList}>
+              {NEARBY_SESSIONS.map((session) => (
+                <View key={`${session.sport}-${session.day}-${session.time}`} style={styles.sessionCard}>
+                  <View style={styles.sessionHeader}>
+                    <Text style={styles.sessionTitle}>
+                      {session.sport} • {session.format}
+                    </Text>
+                    <View style={styles.sessionSlotsBadge}>
+                      <Text style={styles.sessionSlotsText}>{session.slots}</Text>
+                    </View>
+                  </View>
+
+                  <Text style={styles.sessionTime}>
+                    {session.day} • {session.time}
+                  </Text>
+                  <Text style={styles.sessionPlace}>{session.place}</Text>
+                  <Text style={styles.sessionLevel}>{session.level}</Text>
+
+                  <TouchableOpacity style={styles.joinButton} activeOpacity={0.85}>
+                    <Text style={styles.joinButtonText}>Rejoindre</Text>
+                  </TouchableOpacity>
+                </View>
               ))}
             </View>
           </View>
@@ -266,6 +324,73 @@ const styles = StyleSheet.create({
     color: '#4D8DFF',
     fontSize: 18,
     fontWeight: '900',
+  },
+  sessionsSection: {
+    marginTop: 36,
+  },
+  sessionsList: {
+    gap: 12,
+  },
+  sessionCard: {
+    backgroundColor: '#101D33',
+    borderWidth: 1,
+    borderColor: 'rgba(46, 125, 255, 0.4)',
+    borderRadius: 18,
+    padding: 16,
+  },
+  sessionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 10,
+  },
+  sessionTitle: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '800',
+    flex: 1,
+    marginRight: 10,
+  },
+  sessionSlotsBadge: {
+    backgroundColor: 'rgba(46, 125, 255, 0.15)',
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  sessionSlotsText: {
+    color: '#4D8DFF',
+    fontSize: 12,
+    fontWeight: '800',
+  },
+  sessionTime: {
+    color: '#4D8DFF',
+    fontSize: 13,
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  sessionPlace: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  sessionLevel: {
+    color: '#9CA9BA',
+    fontSize: 12,
+    fontWeight: '600',
+    marginBottom: 14,
+  },
+  joinButton: {
+    backgroundColor: '#2E7DFF',
+    borderRadius: 14,
+    paddingVertical: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  joinButtonText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '800',
   },
   bottom: {
     alignItems: 'center',
