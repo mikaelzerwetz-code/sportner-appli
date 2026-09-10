@@ -29,7 +29,7 @@ export function NextSessionCard({ session }: NextSessionCardProps) {
         </View>
 
         <TouchableOpacity style={styles.button} activeOpacity={0.85}>
-          <Text style={styles.buttonText}>Voir la session</Text>
+          <Text style={styles.buttonText}>Voir la session →</Text>
         </TouchableOpacity>
       </View>
     </View>

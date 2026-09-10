@@ -96,3 +96,28 @@ export type CustomTimeSelection = {
   /** Version courte affichée à la place du chip "Choisir", ex. "Sam. 19 · 19h30". */
   label: string;
 };
+
+/**
+ * Carte "Pour toi" : mélange volontairement joueurs et sessions pour
+ * simuler un futur algorithme de recommandation. Toujours 2 max à l'écran.
+ */
+export type ForYouSessionCard = {
+  kind: 'session';
+  id: string;
+  headline: string;
+  meta: string;
+  highlight?: boolean;
+};
+
+export type ForYouPlayerCard = {
+  kind: 'player';
+  id: string;
+  name: string;
+  age: number;
+  sport: string;
+  level: number;
+  distanceKm: number;
+  availability: string;
+};
+
+export type ForYouCard = ForYouSessionCard | ForYouPlayerCard;

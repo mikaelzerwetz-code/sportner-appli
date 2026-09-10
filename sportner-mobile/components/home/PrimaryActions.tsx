@@ -13,7 +13,7 @@ export function PrimaryActions() {
 
   return (
     <View style={styles.container}>
-      <SectionTitle title="Tu veux bouger comment ?" />
+      <SectionTitle title="Tu veux bouger ?" />
 
       <TouchableOpacity
         style={styles.primaryAction}

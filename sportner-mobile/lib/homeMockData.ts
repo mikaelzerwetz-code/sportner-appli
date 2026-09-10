@@ -1,5 +1,6 @@
 import type {
   CurrentUser,
+  ForYouCard,
   GamificationStats,
   NearbyPlayer,
   NearbySession,
@@ -110,6 +111,31 @@ export const NEARBY_SESSIONS: NearbySession[] = [
     distanceKm: 3.8,
     levelRange: '4–6',
     participants: '4/6 joueurs',
+  },
+];
+
+/**
+ * Sélection courte pour la section "Pour toi" de l'accueil : au plus 2
+ * cartes, mélangeant une session et un profil, pour simuler ce que fera
+ * plus tard un vrai moteur de recommandation.
+ */
+export const FOR_YOU: ForYouCard[] = [
+  {
+    kind: 'session',
+    id: 'padel-ce-soir',
+    headline: 'Padel ce soir à 19h',
+    meta: '3/4 joueurs · Niveau 6–8 · 1,2 km',
+    highlight: true,
+  },
+  {
+    kind: 'player',
+    id: 'lucas',
+    name: 'Lucas',
+    age: 24,
+    sport: 'Padel',
+    level: 7,
+    distanceKm: 1.2,
+    availability: 'Disponible ce soir',
   },
 ];
 
