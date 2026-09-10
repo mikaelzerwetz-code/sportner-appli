@@ -1,11 +1,18 @@
 import { useRouter } from 'expo-router';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, type ImageSourcePropType } from 'react-native';
 
 import { brand } from '@/constants/brand';
 import type { NearbyPlayer } from '@/types/home';
 
 type ForYouCarouselProps = {
   players: NearbyPlayer[];
+};
+
+/** Mock V1 à 3 profils fixes : mapping direct id -> photo, pas besoin d'un système plus complexe. */
+const PLAYER_PHOTOS: Record<string, ImageSourcePropType> = {
+  lucas: require('@/assets/images/lucas.png'),
+  sarah: require('@/assets/images/sarah.png'),
+  tom: require('@/assets/images/tom.png'),
 };
 
 function formatDistance(distanceKm: number) {
@@ -27,9 +34,12 @@ export function ForYouCarousel({ players }: ForYouCarouselProps) {
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.list}>
         {players.map((player) => (
           <View key={player.id} style={styles.card}>
-            {/* Zone photo : remplacer par <Image source={...} /> quand de vraies photos de profil seront disponibles. */}
             <View style={styles.photo}>
-              <Text style={styles.photoInitial}>{player.name.charAt(0)}</Text>
+              {PLAYER_PHOTOS[player.id] ? (
+                <Image source={PLAYER_PHOTOS[player.id]} style={styles.photoImage} resizeMode="cover" />
+              ) : (
+                <Text style={styles.photoInitial}>{player.name.charAt(0)}</Text>
+              )}
             </View>
 
             <Text style={styles.name}>{player.name}</Text>
@@ -94,6 +104,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 8,
+    overflow: 'hidden',
+  },
+  photoImage: {
+    width: '100%',
+    height: '100%',
   },
   photoInitial: {
     color: brand.textMuted,

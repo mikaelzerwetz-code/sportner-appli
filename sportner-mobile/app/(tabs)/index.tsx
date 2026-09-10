@@ -20,7 +20,7 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
       >
         <TopBar user={CURRENT_USER} />
-        <HeroCard />
+        <HeroCard imageSource={require('@/assets/images/hero-home.png')} />
         <QuickActionCards />
         <ForYouCarousel players={RECOMMENDED_PLAYERS} />
       </ScrollView>
