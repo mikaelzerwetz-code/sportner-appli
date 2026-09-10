@@ -1,6 +1,14 @@
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Image, StyleSheet, Text, TouchableOpacity, View, type ImageSourcePropType } from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
+  type ImageSourcePropType,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { brand } from '@/constants/brand';
@@ -23,23 +31,35 @@ function getGreeting() {
 }
 
 /**
- * hero-home.png fait 1672x941 (aspect ~1.78, très panoramique). À cette
- * hauteur, resizeMode="cover" centre son crop horizontalement (aucun crop
- * vertical : la hauteur devient le facteur limitant) — le groupe entier
- * reste visible avec seulement les bords légèrement rognés. Une hauteur plus
- * grande recadrerait davantage les côtés ; on reste volontairement ici pour
- * éviter un zoom excessif tout en donnant une Hero immersive.
+ * hero-home.png fait 1672x941 (ratio ~1,78 : très panoramique). La Hero,
+ * elle, est bien plus haute que large (proche du portrait) pour laisser la
+ * place aux textes/CTA superposés. Avec resizeMode="cover" seul, ces deux
+ * ratios très différents forcent un recadrage horizontal important (le
+ * groupe entier ne tient plus dans le cadre). On affiche donc la photo à
+ * son ratio réel, pleine largeur, sans AUCUN recadrage horizontal ni
+ * zoom : elle est centrée verticalement dans la Hero, quitte à laisser une
+ * fine bande de fond sombre au-dessus/en dessous (jamais de blanc, jamais
+ * de coupe de personnes sur les côtés).
  */
-const HERO_HEIGHT = 320;
+const HERO_HEIGHT = 420;
+const HERO_IMAGE_RATIO = 1672 / 941;
 
 export function HeroCard({ user, imageSource }: HeroCardProps) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { width: windowWidth } = useWindowDimensions();
+
+  const imageHeight = windowWidth / HERO_IMAGE_RATIO;
+  const imageTop = (HERO_HEIGHT - imageHeight) / 2;
 
   return (
     <View style={styles.imageBlock}>
       {imageSource ? (
-        <Image source={imageSource} style={StyleSheet.absoluteFill} resizeMode="cover" />
+        <Image
+          source={imageSource}
+          style={[styles.heroImage, { top: imageTop, height: imageHeight }]}
+          resizeMode="cover"
+        />
       ) : (
         <LinearGradient
           colors={['#3A3A34', '#1C1C18', '#0A0A0A']}
@@ -94,6 +114,11 @@ const styles = StyleSheet.create({
     backgroundColor: brand.black,
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
+  },
+  heroImage: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
   },
   topGradient: {
     position: 'absolute',
