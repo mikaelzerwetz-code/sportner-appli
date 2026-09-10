@@ -1,0 +1,83 @@
+export type SportCategory =
+  | 'Sports collectifs'
+  | 'Sports de raquette'
+  | 'Running / endurance'
+  | 'Fitness / musculation'
+  | 'Sports de combat'
+  | 'Sports aquatiques / nautiques'
+  | 'Cyclisme'
+  | 'Outdoor / montagne'
+  | 'Sports de glisse'
+  | 'Sports de précision'
+  | 'Sports adaptés / handisport';
+
+export type Sport = {
+  id: string;
+  name: string;
+  category: SportCategory;
+};
+
+/** Le niveau appartient à un utilisateur + un sport, pas au sport seul. */
+export type UserSportLevel = {
+  sportId: string;
+  sportName: string;
+  level: number;
+};
+
+export type CurrentUser = {
+  firstName: string;
+  city: string;
+  avatarInitial: string;
+};
+
+export type TodayRecommendation = {
+  matchCount: number;
+  sportName: string;
+  description: string;
+};
+
+export type RecommendedSession = {
+  sportName: string;
+  day: string;
+  time: string;
+  participants: string;
+  levelRange: string;
+  place: string;
+};
+
+export type NearbyPlayer = {
+  id: string;
+  name: string;
+  age: number;
+  sport: string;
+  level: number;
+  distanceKm: number;
+  availability: string;
+};
+
+export type SessionTimeframe = 'today' | 'tomorrow' | 'weekend';
+
+export type NearbySession = {
+  id: string;
+  timeframe: SessionTimeframe;
+  title: string;
+  day: string;
+  time: string;
+  place: string;
+  distanceKm: number;
+  levelRange: string;
+  participants: string;
+};
+
+export type NextSessionSummary = {
+  sportName: string;
+  day: string;
+  time: string;
+  withNames: string[];
+};
+
+export type GamificationStats = {
+  streakWeeks: number;
+  points: number;
+  sportnerLevel: number;
+};
