@@ -17,7 +17,10 @@ export function QuickActionCards() {
         <View style={[styles.iconCircle, styles.iconCircleAccent]}>
           <Text style={styles.iconAccentText}>+</Text>
         </View>
-        <Text style={styles.label}>Créer{'\n'}une session</Text>
+        <View style={styles.labelColumn}>
+          <Text style={styles.labelTitle}>Créer</Text>
+          <Text style={styles.labelSubtitle}>une session</Text>
+        </View>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -28,7 +31,10 @@ export function QuickActionCards() {
         <View style={[styles.iconCircle, styles.iconCircleMuted]}>
           <Text style={styles.iconMutedText}>⌕</Text>
         </View>
-        <Text style={styles.label}>Rejoindre{'\n'}une session</Text>
+        <View style={styles.labelColumn}>
+          <Text style={styles.labelTitle}>Rejoindre</Text>
+          <Text style={styles.labelSubtitle}>une session</Text>
+        </View>
       </TouchableOpacity>
     </View>
   );
@@ -46,9 +52,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: brand.surface,
     borderRadius: 20,
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    gap: 10,
+    paddingVertical: 16,
+    paddingHorizontal: 14,
+    gap: 12,
     shadowColor: '#000',
     shadowOpacity: 0.06,
     shadowRadius: 10,
@@ -56,9 +62,9 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   iconCircle: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -70,20 +76,27 @@ const styles = StyleSheet.create({
   },
   iconAccentText: {
     color: brand.black,
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: '800',
-    lineHeight: 20,
+    lineHeight: 24,
   },
   iconMutedText: {
     color: brand.black,
-    fontSize: 15,
+    fontSize: 18,
     fontWeight: '800',
   },
-  label: {
+  labelColumn: {
     flex: 1,
-    fontSize: 12.5,
+  },
+  labelTitle: {
+    fontSize: 14,
     fontWeight: '800',
     color: brand.text,
-    lineHeight: 16,
+  },
+  labelSubtitle: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: brand.textMuted,
+    marginTop: 1,
   },
 });

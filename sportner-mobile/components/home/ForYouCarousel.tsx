@@ -42,15 +42,17 @@ export function ForYouCarousel({ players }: ForYouCarouselProps) {
               )}
             </View>
 
-            <Text style={styles.name}>{player.name}</Text>
-            <Text style={styles.meta}>
-              {player.sport} · {player.level}/10
-            </Text>
-            <Text style={styles.distance}>📍 {formatDistance(player.distanceKm)} km</Text>
+            <View style={styles.cardBody}>
+              <Text style={styles.name}>{player.name}</Text>
+              <Text style={styles.meta}>
+                {player.sport} · {player.level}/10
+              </Text>
+              <Text style={styles.distance}>📍 {formatDistance(player.distanceKm)} km</Text>
 
-            <View style={styles.statusRow}>
-              <View style={styles.statusDot} />
-              <Text style={styles.statusText}>{player.availability}</Text>
+              <View style={styles.statusRow}>
+                <View style={styles.statusDot} />
+                <Text style={styles.statusText}>{player.availability}</Text>
+              </View>
             </View>
           </View>
         ))}
@@ -71,12 +73,12 @@ const styles = StyleSheet.create({
   },
   title: {
     color: brand.text,
-    fontSize: 17,
+    fontSize: 22,
     fontWeight: '900',
   },
   link: {
     color: brand.accent,
-    fontSize: 12.5,
+    fontSize: 14,
     fontWeight: '800',
   },
   list: {
@@ -84,27 +86,22 @@ const styles = StyleSheet.create({
     paddingRight: 8,
   },
   card: {
-    width: 130,
+    width: 112,
     backgroundColor: brand.surface,
     borderRadius: 18,
-    borderWidth: 1,
-    borderColor: brand.border,
-    padding: 10,
+    overflow: 'hidden',
     shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 1,
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 2,
   },
   photo: {
     width: '100%',
-    height: 76,
-    borderRadius: 14,
+    height: 112,
     backgroundColor: brand.surfaceMuted,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 8,
-    overflow: 'hidden',
   },
   photoImage: {
     width: '100%',
@@ -114,6 +111,11 @@ const styles = StyleSheet.create({
     color: brand.textMuted,
     fontSize: 22,
     fontWeight: '800',
+  },
+  cardBody: {
+    paddingHorizontal: 10,
+    paddingTop: 8,
+    paddingBottom: 10,
   },
   name: {
     color: brand.text,

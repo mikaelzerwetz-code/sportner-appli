@@ -60,7 +60,7 @@ export function HeroCard({ user, imageSource }: HeroCardProps) {
         pointerEvents="none"
       />
 
-      <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
+      <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
         <View>
           <Text style={styles.greeting}>
             {getGreeting()} {user.firstName} 👋
@@ -121,31 +121,31 @@ const styles = StyleSheet.create({
   },
   greeting: {
     color: '#FFFFFF',
-    fontSize: 17,
+    fontSize: 22,
     fontWeight: '800',
   },
   location: {
-    color: 'rgba(255,255,255,0.85)',
-    fontSize: 11.5,
+    color: 'rgba(255,255,255,0.9)',
+    fontSize: 13,
     fontWeight: '600',
     marginTop: 3,
   },
   notifButton: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(20,20,20,0.4)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   notifIcon: {
-    fontSize: 15,
+    fontSize: 16,
   },
   bottomContent: {
     position: 'absolute',
     left: 20,
     right: 20,
-    bottom: 22,
+    bottom: 18,
   },
   headline: {
     color: '#FFFFFF',
@@ -158,9 +158,9 @@ const styles = StyleSheet.create({
   },
   cta: {
     backgroundColor: brand.accent,
-    borderRadius: 24,
-    marginTop: 16,
-    paddingVertical: 15,
+    borderRadius: 26,
+    marginTop: 14,
+    paddingVertical: 16,
     alignItems: 'center',
     justifyContent: 'center',
   },
