@@ -1,14 +1,6 @@
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import {
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  useWindowDimensions,
-  type ImageSourcePropType,
-} from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View, type ImageSourcePropType } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { brand } from '@/constants/brand';
@@ -31,35 +23,26 @@ function getGreeting() {
 }
 
 /**
- * hero-home.png fait 1672x941 (ratio ~1,78 : très panoramique). La Hero,
- * elle, est bien plus haute que large (proche du portrait) pour laisser la
- * place aux textes/CTA superposés. Avec resizeMode="cover" seul, ces deux
- * ratios très différents forcent un recadrage horizontal important (le
- * groupe entier ne tient plus dans le cadre). On affiche donc la photo à
- * son ratio réel, pleine largeur, sans AUCUN recadrage horizontal ni
- * zoom : elle est centrée verticalement dans la Hero, quitte à laisser une
- * fine bande de fond sombre au-dessus/en dessous (jamais de blanc, jamais
- * de coupe de personnes sur les côtés).
+ * DIAGNOSTIC (vérifié avant ce fix) :
+ * - hero-home.png fait exactement 1672x941px (ratio 1,7768).
+ * - Le conteneur Hero n'a pas de largeur fixe : il s'étire sur toute la
+ *   largeur de l'écran (aucun padding parent), donc ratio conteneur très
+ *   différent du ratio de l'image.
+ * Tout réglage de position/zoom/scale manuel a été retiré. resizeMode
+ * "contain" garantit par construction que 100% de l'image source est
+ * visible, sans recadrage, quel que soit le ratio du conteneur ; le fond
+ * noir du conteneur comble l'espace laissé par les bandes haut/bas.
  */
 const HERO_HEIGHT = 420;
-const HERO_IMAGE_RATIO = 1672 / 941;
 
 export function HeroCard({ user, imageSource }: HeroCardProps) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { width: windowWidth } = useWindowDimensions();
-
-  const imageHeight = windowWidth / HERO_IMAGE_RATIO;
-  const imageTop = (HERO_HEIGHT - imageHeight) / 2;
 
   return (
     <View style={styles.imageBlock}>
       {imageSource ? (
-        <Image
-          source={imageSource}
-          style={[styles.heroImage, { top: imageTop, height: imageHeight }]}
-          resizeMode="cover"
-        />
+        <Image source={imageSource} style={StyleSheet.absoluteFill} resizeMode="contain" />
       ) : (
         <LinearGradient
           colors={['#3A3A34', '#1C1C18', '#0A0A0A']}
@@ -114,11 +97,6 @@ const styles = StyleSheet.create({
     backgroundColor: brand.black,
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
-  },
-  heroImage: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
   },
   topGradient: {
     position: 'absolute',
