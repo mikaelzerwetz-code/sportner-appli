@@ -22,7 +22,7 @@ export function HeroCard({ imageSource }: HeroCardProps) {
     <View style={styles.wrapper}>
       <View style={styles.imageBlock}>
         {imageSource ? (
-          <Image source={imageSource} style={StyleSheet.absoluteFill} resizeMode="cover" />
+          <Image source={imageSource} style={styles.heroImage} resizeMode="cover" />
         ) : (
           <LinearGradient
             colors={['#3A3A34', '#1C1C18', '#0A0A0A']}
@@ -63,6 +63,23 @@ const styles = StyleSheet.create({
     borderRadius: 26,
     overflow: 'hidden',
     backgroundColor: brand.black,
+  },
+  /**
+   * Le composant Image de React Native n'a pas d'équivalent natif à
+   * `objectPosition`/`contentPosition` : resizeMode="cover" seul centre
+   * toujours son cadrage. Avec cette photo (beaucoup de ciel en haut, le
+   * groupe au centre/bas), un centrage strict masque le groupe derrière du
+   * ciel. On agrandit donc l'image au-delà du cadre (hauteur > 195) puis on
+   * la remonte (top négatif) dans le conteneur `overflow: hidden` : la
+   * fenêtre visible se déplace ainsi vers le bas/centre de la photo, sans
+   * toucher aux dimensions de la Hero Card ni à la position du texte.
+   */
+  heroImage: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: -49,
+    height: 244,
   },
   gradient: {
     position: 'absolute',
