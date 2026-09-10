@@ -47,12 +47,12 @@ export function PrimaryActions() {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 28,
+    marginTop: 18,
   },
   primaryAction: {
     backgroundColor: colors.accent,
     borderRadius: 16,
-    paddingVertical: 16,
+    paddingVertical: 13,
     paddingHorizontal: 18,
     flexDirection: 'row',
     alignItems: 'center',
@@ -70,8 +70,8 @@ const styles = StyleSheet.create({
   },
   secondaryRow: {
     flexDirection: 'row',
-    gap: 10,
-    marginTop: 10,
+    gap: 8,
+    marginTop: 8,
   },
   secondaryAction: {
     flex: 1,
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: 16,
-    paddingVertical: 14,
+    paddingVertical: 11,
     paddingHorizontal: 10,
     alignItems: 'center',
     justifyContent: 'center',

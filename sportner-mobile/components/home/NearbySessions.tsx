@@ -53,13 +53,11 @@ export function NearbySessions({ sessions }: NearbySessionsProps) {
             <View key={session.id} style={styles.card}>
               <Text style={styles.title}>{session.title}</Text>
               <Text style={styles.time}>
-                {session.day} · {session.time}
+                {session.day} · {session.time} · {session.place} · {formatDistance(session.distanceKm)} km
               </Text>
-              <Text style={styles.place}>
-                {session.place} · {formatDistance(session.distanceKm)} km
+              <Text style={styles.level}>
+                Niveau {session.levelRange} · {session.participants}
               </Text>
-              <Text style={styles.level}>Niveau {session.levelRange}</Text>
-              <Text style={styles.participants}>{session.participants}</Text>
 
               <TouchableOpacity style={styles.joinButton} activeOpacity={0.85}>
                 <Text style={styles.joinButtonText}>Rejoindre</Text>
@@ -74,12 +72,12 @@ export function NearbySessions({ sessions }: NearbySessionsProps) {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 32,
+    marginTop: 20,
   },
   filters: {
     flexDirection: 'row',
     gap: 8,
-    marginBottom: 14,
+    marginBottom: 10,
   },
   filterChip: {
     backgroundColor: colors.surface,
@@ -102,7 +100,7 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   list: {
-    gap: 12,
+    gap: 8,
   },
   empty: {
     color: colors.textMuted,
@@ -113,44 +111,32 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 18,
-    padding: 16,
+    borderRadius: 16,
+    padding: 12,
   },
   title: {
     color: colors.text,
-    fontSize: 15,
+    fontSize: 13.5,
     fontWeight: '800',
   },
   time: {
     color: colors.accentSoft,
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '700',
-    marginTop: 6,
-  },
-  place: {
-    color: colors.text,
-    fontSize: 13,
-    fontWeight: '600',
     marginTop: 4,
   },
   level: {
     color: colors.textMuted,
     fontSize: 12,
     fontWeight: '600',
-    marginTop: 4,
-  },
-  participants: {
-    color: colors.textMuted,
-    fontSize: 12,
-    fontWeight: '600',
-    marginTop: 2,
+    marginTop: 3,
   },
   joinButton: {
     backgroundColor: colors.accent,
-    borderRadius: 14,
-    paddingVertical: 11,
+    borderRadius: 12,
+    paddingVertical: 9,
     alignItems: 'center',
-    marginTop: 14,
+    marginTop: 10,
   },
   joinButtonText: {
     color: colors.text,

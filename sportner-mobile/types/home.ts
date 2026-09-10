@@ -33,7 +33,9 @@ export type CurrentUser = {
 export type TodayRecommendation = {
   matchCount: number;
   sportName: string;
-  description: string;
+  availability: string;
+  levelRange: string;
+  maxDistanceKm: number;
 };
 
 export type RecommendedSession = {
@@ -81,3 +83,5 @@ export type GamificationStats = {
   points: number;
   sportnerLevel: number;
 };
+
+export type TimeIntent = 'now' | 'tonight' | 'tomorrow' | 'week' | 'custom';

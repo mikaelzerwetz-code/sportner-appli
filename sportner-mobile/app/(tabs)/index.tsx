@@ -8,6 +8,7 @@ import { NearbyPlayers } from '@/components/home/NearbyPlayers';
 import { NearbySessions } from '@/components/home/NearbySessions';
 import { NextSessionCard } from '@/components/home/NextSessionCard';
 import { PrimaryActions } from '@/components/home/PrimaryActions';
+import { TimeFilter } from '@/components/home/TimeFilter';
 import { TodayForYou } from '@/components/home/TodayForYou';
 import { colors } from '@/constants/theme';
 import {
@@ -33,11 +34,12 @@ export default function HomeScreen() {
       >
         <HomeHeader user={CURRENT_USER} />
         <PrimaryActions />
+        <TimeFilter />
+        {NEXT_SESSION ? <NextSessionCard session={NEXT_SESSION} /> : null}
         <MySports sports={MY_SPORTS} />
         <TodayForYou recommendation={TODAY_RECOMMENDATION} session={RECOMMENDED_SESSION} />
         <NearbyPlayers players={NEARBY_PLAYERS} />
         <NearbySessions sessions={NEARBY_SESSIONS} />
-        {NEXT_SESSION ? <NextSessionCard session={NEXT_SESSION} /> : null}
         <GamificationStrip stats={GAMIFICATION} />
       </ScrollView>
     </SafeAreaView>

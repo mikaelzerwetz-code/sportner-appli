@@ -25,7 +25,9 @@ export const MY_SPORTS: UserSportLevel[] = [
 export const TODAY_RECOMMENDATION: TodayRecommendation = {
   matchCount: 2,
   sportName: 'padel',
-  description: 'Niveau 6–8 · moins de 5 km · disponibles ce soir',
+  availability: 'ce soir',
+  levelRange: '6–8',
+  maxDistanceKm: 5,
 };
 
 export const RECOMMENDED_SESSION: RecommendedSession = {
@@ -56,15 +58,15 @@ export const NEARBY_SESSIONS: NearbySession[] = [
     participants: '8/10 participants',
   },
   {
-    id: 'padel-bocage',
+    id: 'fitness-cross-training',
     timeframe: 'today',
-    title: 'Padel — 1 place restante',
+    title: 'Fitness — Cours collectif',
     day: 'Aujourd’hui',
-    time: '19:00',
-    place: 'Padel Bocage',
-    distanceKm: 1.2,
-    levelRange: '6–8',
-    participants: '3/4 joueurs',
+    time: '18:30',
+    place: 'Studio Endorphine',
+    distanceKm: 1.6,
+    levelRange: 'Tous niveaux',
+    participants: '6/12 participants',
   },
   {
     id: 'running-borely',

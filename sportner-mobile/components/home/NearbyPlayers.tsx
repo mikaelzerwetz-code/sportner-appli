@@ -29,9 +29,9 @@ export function NearbyPlayers({ players }: NearbyPlayersProps) {
                 {player.name}, {player.age} ans
               </Text>
               <Text style={styles.meta}>
-                {player.sport} · Niveau {player.level}/10
+                {player.sport} · Niveau {player.level}/10 ·{' '}
+                <Text style={styles.metaAccent}>{formatDistance(player.distanceKm)} km</Text>
               </Text>
-              <Text style={styles.distance}>À {formatDistance(player.distanceKm)} km</Text>
               <View style={styles.availabilityBadge}>
                 <Text style={styles.availabilityText}>{player.availability}</Text>
               </View>
@@ -49,10 +49,10 @@ export function NearbyPlayers({ players }: NearbyPlayersProps) {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 32,
+    marginTop: 20,
   },
   list: {
-    gap: 12,
+    gap: 8,
   },
   card: {
     flexDirection: 'row',
@@ -60,21 +60,21 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 18,
-    padding: 14,
+    borderRadius: 16,
+    padding: 11,
   },
   avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: colors.accent,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 14,
+    marginRight: 12,
   },
   avatarText: {
     color: colors.text,
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: '800',
   },
   info: {
@@ -82,20 +82,18 @@ const styles = StyleSheet.create({
   },
   name: {
     color: colors.text,
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '800',
   },
   meta: {
     color: colors.textMuted,
-    fontSize: 13,
+    fontSize: 12.5,
     fontWeight: '600',
-    marginTop: 3,
+    marginTop: 2,
   },
-  distance: {
+  metaAccent: {
     color: colors.accentSoft,
-    fontSize: 12,
     fontWeight: '700',
-    marginTop: 3,
   },
   availabilityBadge: {
     backgroundColor: colors.borderSoft,
@@ -103,7 +101,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 3,
     alignSelf: 'flex-start',
-    marginTop: 6,
+    marginTop: 5,
   },
   availabilityText: {
     color: colors.accentSoft,
@@ -111,17 +109,17 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   cta: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     backgroundColor: colors.borderSoft,
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 10,
+    marginLeft: 8,
   },
   ctaText: {
     color: colors.accentSoft,
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '900',
   },
 });

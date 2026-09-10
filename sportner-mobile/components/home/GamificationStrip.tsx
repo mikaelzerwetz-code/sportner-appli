@@ -28,8 +28,8 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     borderRadius: 14,
     paddingHorizontal: 14,
-    paddingVertical: 12,
-    marginTop: 32,
+    paddingVertical: 10,
+    marginTop: 20,
   },
   streak: {
     color: colors.text,

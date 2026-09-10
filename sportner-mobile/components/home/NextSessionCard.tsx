@@ -38,14 +38,14 @@ export function NextSessionCard({ session }: NextSessionCardProps) {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 32,
+    marginTop: 20,
   },
   label: {
     color: colors.textMuted,
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '700',
     letterSpacing: 0.3,
-    marginBottom: 10,
+    marginBottom: 8,
     textTransform: 'uppercase',
   },
   card: {
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: 16,
-    paddingVertical: 12,
+    paddingVertical: 10,
     paddingHorizontal: 14,
   },
   info: {

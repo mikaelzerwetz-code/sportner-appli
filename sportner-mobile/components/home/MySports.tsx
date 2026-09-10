@@ -42,10 +42,10 @@ export function MySports({ sports }: MySportsProps) {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 32,
+    marginTop: 20,
   },
   list: {
-    gap: 8,
+    gap: 6,
   },
   row: {
     flexDirection: 'row',
@@ -55,8 +55,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: 14,
-    paddingHorizontal: 16,
-    paddingVertical: 13,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
   },
   sportName: {
     color: colors.text,
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     borderStyle: 'dashed',
     borderColor: colors.border,
     borderRadius: 14,
-    paddingVertical: 12,
+    paddingVertical: 10,
     alignItems: 'center',
     marginTop: 2,
   },
