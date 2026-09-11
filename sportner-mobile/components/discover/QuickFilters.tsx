@@ -5,7 +5,7 @@ import { ChooseDateModal } from '@/components/discover/ChooseDateModal';
 import { DistanceFilterSheet } from '@/components/discover/DistanceFilterSheet';
 import { FilterSheet } from '@/components/discover/FilterSheet';
 import { LevelFilterSheet } from '@/components/discover/LevelFilterSheet';
-import { MoreFiltersSheet, type Gender } from '@/components/discover/MoreFiltersSheet';
+import { MoreFiltersSheet, type Gender, type PracticeIntent } from '@/components/discover/MoreFiltersSheet';
 import { brand } from '@/constants/brand';
 import { WHEN_OPTIONS } from '@/lib/discoverMockData';
 import { SPORT_CATEGORIES, SPORTS_CATALOG } from '@/lib/sportsCatalog';
@@ -22,6 +22,8 @@ export type QuickFiltersValue = {
   levelRange: NumericRange | null;
   ageRange: NumericRange | null;
   gender: Gender | null;
+  practiceIntent: PracticeIntent | null;
+  verifiedOnly: boolean;
 };
 
 export const EMPTY_QUICK_FILTERS: QuickFiltersValue = {
@@ -32,6 +34,8 @@ export const EMPTY_QUICK_FILTERS: QuickFiltersValue = {
   levelRange: null,
   ageRange: null,
   gender: null,
+  practiceIntent: null,
+  verifiedOnly: false,
 };
 
 type FilterKey = 'sport' | 'when' | 'distance' | 'level';
@@ -77,7 +81,11 @@ export function QuickFilters({ value, onChange, availableFilters = ALL_FILTERS }
   const distanceLabel = value.distance != null ? `≤ ${value.distance} km` : 'Distance';
   const levelLabel = value.levelRange ? `Niv. ${value.levelRange.min}–${value.levelRange.max}` : 'Niveau';
 
-  const moreFiltersCount = (value.ageRange ? 1 : 0) + (value.gender ? 1 : 0);
+  const moreFiltersCount =
+    (value.ageRange ? 1 : 0) +
+    (value.gender ? 1 : 0) +
+    (value.practiceIntent ? 1 : 0) +
+    (value.verifiedOnly ? 1 : 0);
   const moreFiltersLabel = moreFiltersCount > 0 ? `+ Filtres (${moreFiltersCount})` : '+ Filtres';
 
   return (
@@ -257,9 +265,15 @@ export function QuickFilters({ value, onChange, availableFilters = ALL_FILTERS }
         visible={activeSheet === 'more'}
         ageRange={value.ageRange}
         gender={value.gender}
+        practiceIntent={value.practiceIntent}
+        verifiedOnly={value.verifiedOnly}
         onClose={closeSheet}
-        onApply={(ageRange, gender) => onChange({ ...value, ageRange, gender })}
-        onClearAll={() => onChange({ ...value, ageRange: null, gender: null })}
+        onApply={(ageRange, gender, practiceIntent, verifiedOnly) =>
+          onChange({ ...value, ageRange, gender, practiceIntent, verifiedOnly })
+        }
+        onClearAll={() =>
+          onChange({ ...value, ageRange: null, gender: null, practiceIntent: null, verifiedOnly: false })
+        }
       />
     </>
   );

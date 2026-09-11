@@ -81,10 +81,14 @@ export default function DiscoverScreen() {
       if (filters.levelRange && (player.level < filters.levelRange.min || player.level > filters.levelRange.max)) {
         return false;
       }
-      if (filters.ageRange && (player.age < filters.ageRange.min || player.age > filters.ageRange.max)) {
-        return false;
+      if (filters.ageRange) {
+        if (player.age < filters.ageRange.min) return false;
+        // max === 70 signifie "70 ans et +" : pas de plafond réel dans ce cas.
+        if (filters.ageRange.max < 70 && player.age > filters.ageRange.max) return false;
       }
       if (filters.gender && player.gender !== filters.gender) return false;
+      if (filters.practiceIntent && player.practiceIntent !== filters.practiceIntent) return false;
+      if (filters.verifiedOnly && !player.isVerified) return false;
       if (filters.timeIntent && !matchesWhenIntent(player.availability, filters.timeIntent, customDate)) {
         return false;
       }

@@ -57,6 +57,10 @@ export type NearbyPlayer = {
   availability: string;
   /** Optionnel : uniquement renseigné sur les profils Découvrir pour le filtre Genre. */
   gender?: 'male' | 'female';
+  /** Optionnel : uniquement renseigné sur les profils Découvrir pour le filtre Type de partenaire. */
+  practiceIntent?: 'leisure' | 'regular' | 'competition';
+  /** Optionnel : uniquement renseigné sur les profils Découvrir pour le filtre Profils vérifiés. */
+  isVerified?: boolean;
 };
 
 export type SessionTimeframe = 'today' | 'tomorrow' | 'weekend';

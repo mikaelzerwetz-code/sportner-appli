@@ -6,19 +6,20 @@ import type { Coach, DiscoverSession, DiscoverWhenIntent } from '@/types/discove
  * sélection de 2-3) : Découvrir est le moteur d'exploration, donc plus
  * fourni. À terme, ces listes viendront de Supabase.
  *
- * `gender` n'est renseigné qu'ici (uniquement pour le filtre Genre de
- * Découvrir) : le champ est optionnel sur `NearbyPlayer`, donc les profils
- * de l'accueil (lib/homeRecommendations.ts, lib/homeMockData.ts) n'ont pas
- * besoin d'être touchés.
+ * `gender`, `practiceIntent` et `isVerified` ne sont renseignés qu'ici
+ * (uniquement pour les filtres de Découvrir) : ces champs sont optionnels
+ * sur `NearbyPlayer`, donc les profils de l'accueil
+ * (lib/homeRecommendations.ts, lib/homeMockData.ts) n'ont pas besoin
+ * d'être touchés.
  */
 export const DISCOVER_PLAYERS: NearbyPlayer[] = [
-  { id: 'lucas', name: 'Lucas', age: 24, sport: 'Padel', level: 7, distanceKm: 1.2, availability: 'Disponible ce soir', gender: 'male' },
-  { id: 'sarah', name: 'Sarah', age: 22, sport: 'Running', level: 5, distanceKm: 2.1, availability: 'Disponible demain matin', gender: 'female' },
-  { id: 'mehdi', name: 'Mehdi', age: 26, sport: 'Football', level: 6, distanceKm: 3.4, availability: 'Disponible vendredi soir', gender: 'male' },
-  { id: 'clara', name: 'Clara', age: 29, sport: 'Tennis', level: 8, distanceKm: 4.5, availability: 'Disponible ce soir', gender: 'female' },
-  { id: 'yanis', name: 'Yanis', age: 21, sport: 'Boxe', level: 4, distanceKm: 0.8, availability: 'Disponible maintenant', gender: 'male' },
-  { id: 'ines', name: 'Inès', age: 27, sport: 'Fitness', level: 6, distanceKm: 2.9, availability: 'Disponible demain matin', gender: 'female' },
-  { id: 'thomas', name: 'Thomas', age: 31, sport: 'Padel', level: 9, distanceKm: 6.2, availability: 'Disponible ce week-end', gender: 'male' },
+  { id: 'lucas', name: 'Lucas', age: 24, sport: 'Padel', level: 7, distanceKm: 1.2, availability: 'Disponible ce soir', gender: 'male', practiceIntent: 'regular', isVerified: true },
+  { id: 'sarah', name: 'Sarah', age: 22, sport: 'Running', level: 5, distanceKm: 2.1, availability: 'Disponible demain matin', gender: 'female', practiceIntent: 'leisure', isVerified: true },
+  { id: 'mehdi', name: 'Mehdi', age: 26, sport: 'Football', level: 6, distanceKm: 3.4, availability: 'Disponible vendredi soir', gender: 'male', practiceIntent: 'competition', isVerified: false },
+  { id: 'clara', name: 'Clara', age: 29, sport: 'Tennis', level: 8, distanceKm: 4.5, availability: 'Disponible ce soir', gender: 'female', practiceIntent: 'regular', isVerified: true },
+  { id: 'yanis', name: 'Yanis', age: 21, sport: 'Boxe', level: 4, distanceKm: 0.8, availability: 'Disponible maintenant', gender: 'male', practiceIntent: 'leisure', isVerified: false },
+  { id: 'ines', name: 'Inès', age: 27, sport: 'Fitness', level: 6, distanceKm: 2.9, availability: 'Disponible demain matin', gender: 'female', practiceIntent: 'competition', isVerified: false },
+  { id: 'thomas', name: 'Thomas', age: 31, sport: 'Padel', level: 9, distanceKm: 6.2, availability: 'Disponible ce week-end', gender: 'male', practiceIntent: 'regular', isVerified: true },
 ];
 
 export const DISCOVER_SESSIONS: DiscoverSession[] = [
