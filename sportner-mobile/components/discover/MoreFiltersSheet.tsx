@@ -125,7 +125,7 @@ export function MoreFiltersSheet({
         })}
       </View>
 
-      <Text style={[styles.sectionTitle, styles.sectionSpacing]}>Type de partenaire</Text>
+      <Text style={[styles.sectionTitle, styles.sectionSpacing]}>Pratique recherchée</Text>
       <View style={styles.chipRow}>
         {PRACTICE_INTENT_OPTIONS.map((option) => {
           const isActive = draftPracticeIntent === option.key;
