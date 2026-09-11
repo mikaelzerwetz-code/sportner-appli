@@ -1,19 +1,24 @@
 import type { NearbyPlayer } from '@/types/home';
-import type { Coach, DiscoverSession, DistanceOption, LevelRangeOption } from '@/types/discover';
+import type { Coach, DiscoverSession, DiscoverWhenIntent } from '@/types/discover';
 
 /**
  * Catalogue plus large que celui de l'accueil (qui n'en montre qu'une
  * sélection de 2-3) : Découvrir est le moteur d'exploration, donc plus
  * fourni. À terme, ces listes viendront de Supabase.
+ *
+ * `gender` n'est renseigné qu'ici (uniquement pour le filtre Genre de
+ * Découvrir) : le champ est optionnel sur `NearbyPlayer`, donc les profils
+ * de l'accueil (lib/homeRecommendations.ts, lib/homeMockData.ts) n'ont pas
+ * besoin d'être touchés.
  */
 export const DISCOVER_PLAYERS: NearbyPlayer[] = [
-  { id: 'lucas', name: 'Lucas', age: 24, sport: 'Padel', level: 7, distanceKm: 1.2, availability: 'Disponible ce soir' },
-  { id: 'sarah', name: 'Sarah', age: 22, sport: 'Running', level: 5, distanceKm: 2.1, availability: 'Disponible demain matin' },
-  { id: 'mehdi', name: 'Mehdi', age: 26, sport: 'Football', level: 6, distanceKm: 3.4, availability: 'Disponible vendredi soir' },
-  { id: 'clara', name: 'Clara', age: 29, sport: 'Tennis', level: 8, distanceKm: 4.5, availability: 'Disponible ce soir' },
-  { id: 'yanis', name: 'Yanis', age: 21, sport: 'Boxe', level: 4, distanceKm: 0.8, availability: 'Disponible maintenant' },
-  { id: 'ines', name: 'Inès', age: 27, sport: 'Fitness', level: 6, distanceKm: 2.9, availability: 'Disponible demain matin' },
-  { id: 'thomas', name: 'Thomas', age: 31, sport: 'Padel', level: 9, distanceKm: 6.2, availability: 'Disponible ce week-end' },
+  { id: 'lucas', name: 'Lucas', age: 24, sport: 'Padel', level: 7, distanceKm: 1.2, availability: 'Disponible ce soir', gender: 'male' },
+  { id: 'sarah', name: 'Sarah', age: 22, sport: 'Running', level: 5, distanceKm: 2.1, availability: 'Disponible demain matin', gender: 'female' },
+  { id: 'mehdi', name: 'Mehdi', age: 26, sport: 'Football', level: 6, distanceKm: 3.4, availability: 'Disponible vendredi soir', gender: 'male' },
+  { id: 'clara', name: 'Clara', age: 29, sport: 'Tennis', level: 8, distanceKm: 4.5, availability: 'Disponible ce soir', gender: 'female' },
+  { id: 'yanis', name: 'Yanis', age: 21, sport: 'Boxe', level: 4, distanceKm: 0.8, availability: 'Disponible maintenant', gender: 'male' },
+  { id: 'ines', name: 'Inès', age: 27, sport: 'Fitness', level: 6, distanceKm: 2.9, availability: 'Disponible demain matin', gender: 'female' },
+  { id: 'thomas', name: 'Thomas', age: 31, sport: 'Padel', level: 9, distanceKm: 6.2, availability: 'Disponible ce week-end', gender: 'male' },
 ];
 
 export const DISCOVER_SESSIONS: DiscoverSession[] = [
@@ -130,19 +135,14 @@ export const DISCOVER_COACHES: Coach[] = [
   },
 ];
 
-export const DISTANCE_OPTIONS: DistanceOption[] = [
-  { key: 'any', label: 'Peu importe', maxKm: null },
-  { key: '1', label: '1 km', maxKm: 1 },
-  { key: '3', label: '3 km', maxKm: 3 },
-  { key: '5', label: '5 km', maxKm: 5 },
-  { key: '10', label: '10 km', maxKm: 10 },
-  { key: '25', label: '25 km', maxKm: 25 },
-];
-
-export const LEVEL_RANGE_OPTIONS: LevelRangeOption[] = [
-  { key: 'any', label: 'Tous niveaux', min: 1, max: 10 },
-  { key: '1-3', label: '1–3 · Débutant', min: 1, max: 3 },
-  { key: '4-6', label: '4–6 · Intermédiaire', min: 4, max: 6 },
-  { key: '7-8', label: '7–8 · Avancé', min: 7, max: 8 },
-  { key: '9-10', label: '9–10 · Expert', min: 9, max: 10 },
+/**
+ * "Aujourd'hui" et "Ce soir" étaient redondants avec l'ancien filtre à 5
+ * choix ; simplifié à 3 options. Correspondance toujours fictive (pas de
+ * vraie disponibilité datée côté données) : voir `matchesWhenIntent` dans
+ * decouvrir.tsx.
+ */
+export const WHEN_OPTIONS: { key: DiscoverWhenIntent; label: string }[] = [
+  { key: 'today', label: 'Aujourd’hui' },
+  { key: 'tomorrow', label: 'Demain' },
+  { key: 'custom', label: 'Choisir une date' },
 ];

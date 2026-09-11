@@ -34,16 +34,15 @@ export type Coach = {
 
 export type MapCategory = 'sessions' | 'infrastructures' | 'clubs' | 'coaches' | 'players';
 
-export type DistanceOption = {
-  key: string;
-  label: string;
-  /** null = pas de limite */
-  maxKm: number | null;
-};
+/**
+ * Version simplifiée du "Quand ?" de Découvrir (3 choix au lieu des 5 de
+ * `TimeIntent` partagé avec l'accueil). Volontairement séparée de
+ * `TimeIntent` (types/home.ts) pour ne pas toucher au filtre `TimeFilter`
+ * (composant accueil dormant) ni à `lib/homeMockData.ts` qui en dépendent.
+ */
+export type DiscoverWhenIntent = 'today' | 'tomorrow' | 'custom';
 
-export type LevelRangeOption = {
-  key: string;
-  label: string;
+export type NumericRange = {
   min: number;
   max: number;
 };

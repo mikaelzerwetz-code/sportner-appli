@@ -55,6 +55,8 @@ export type NearbyPlayer = {
   level: number;
   distanceKm: number;
   availability: string;
+  /** Optionnel : uniquement renseigné sur les profils Découvrir pour le filtre Genre. */
+  gender?: 'male' | 'female';
 };
 
 export type SessionTimeframe = 'today' | 'tomorrow' | 'weekend';

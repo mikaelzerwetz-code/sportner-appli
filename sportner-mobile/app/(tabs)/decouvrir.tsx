@@ -12,23 +12,46 @@ import { SearchBar } from '@/components/discover/SearchBar';
 import { SessionCard } from '@/components/discover/SessionCard';
 import { brand } from '@/constants/brand';
 import { DISCOVER_COACHES, DISCOVER_PLAYERS, DISCOVER_SESSIONS } from '@/lib/discoverMockData';
-import { getTimeframeForIntent } from '@/lib/timeIntent';
-import type { TimeIntent } from '@/types/home';
-import type { DiscoverMode } from '@/types/discover';
+import { diffInDays } from '@/lib/timeIntent';
+import type { SessionTimeframe } from '@/types/home';
+import type { DiscoverMode, DiscoverWhenIntent } from '@/types/discover';
 
-/** Correspondance fictive intention <-> texte de disponibilité des joueurs (pas de vrai calcul de dispo). */
-function matchesTimeIntent(availability: string, intent: TimeIntent): boolean {
+/**
+ * Correspondance fictive intention <-> texte de disponibilité des joueurs
+ * (pas de vraie base de disponibilité datée). Pour une date personnalisée,
+ * on retombe sur la règle "aujourd'hui"/"demain" quand la date tombe pile
+ * dessus, et on ne filtre pas au-delà (comme pour les autres intentions
+ * non gérées explicitement) plutôt que de vider la liste sans raison réelle.
+ */
+function matchesWhenIntent(availability: string, intent: DiscoverWhenIntent, customDate: Date | null): boolean {
   const text = availability.toLowerCase();
-  switch (intent) {
-    case 'now':
-      return text.includes('maintenant');
-    case 'tonight':
-      return text.includes('ce soir') || text.includes('maintenant');
-    case 'tomorrow':
-      return text.includes('demain');
-    default:
-      return true;
+  const matchesToday = text.includes('ce soir') || text.includes('maintenant');
+  const matchesTomorrow = text.includes('demain');
+
+  if (intent === 'today') return matchesToday;
+  if (intent === 'tomorrow') return matchesTomorrow;
+
+  if (intent === 'custom' && customDate) {
+    const diff = diffInDays(new Date(), customDate);
+    if (diff <= 0) return matchesToday;
+    if (diff === 1) return matchesTomorrow;
   }
+
+  return true;
+}
+
+/** Même principe que matchesWhenIntent, appliqué aux sessions (qui ont une timeframe explicite). */
+function whenIntentToSessionTimeframe(intent: DiscoverWhenIntent, customDate: Date | null): SessionTimeframe {
+  if (intent === 'today') return 'today';
+  if (intent === 'tomorrow') return 'tomorrow';
+
+  if (intent === 'custom' && customDate) {
+    const diff = diffInDays(new Date(), customDate);
+    if (diff <= 0) return 'today';
+    if (diff === 1) return 'tomorrow';
+  }
+
+  return 'today';
 }
 
 export default function DiscoverScreen() {
@@ -38,20 +61,33 @@ export default function DiscoverScreen() {
 
   const normalizedQuery = searchQuery.trim().toLowerCase();
 
+  const customDate = filters.customDate ? new Date(filters.customDate) : null;
+
   const sessionsTimeframe = useMemo(() => {
     if (!filters.timeIntent) return null;
-    const customDate = filters.customSelection ? new Date(filters.customSelection.dateIso) : undefined;
-    return getTimeframeForIntent(filters.timeIntent, customDate);
-  }, [filters.timeIntent, filters.customSelection]);
+    return whenIntentToSessionTimeframe(filters.timeIntent, customDate);
+  }, [filters.timeIntent, filters.customDate]);
 
+  /**
+   * Filtrage centralisé et cumulatif : toutes les conditions actives (sport,
+   * quand, distance, niveau, âge, genre, recherche libre) sont appliquées
+   * dans le même `.filter()`, un profil doit toutes les satisfaire pour
+   * apparaître. Pas de système de filtrage parallèle.
+   */
   const filteredPlayers = useMemo(() => {
     return DISCOVER_PLAYERS.filter((player) => {
       if (filters.sport && player.sport !== filters.sport) return false;
-      if (filters.distance?.maxKm != null && player.distanceKm > filters.distance.maxKm) return false;
+      if (filters.distance != null && player.distanceKm > filters.distance) return false;
       if (filters.levelRange && (player.level < filters.levelRange.min || player.level > filters.levelRange.max)) {
         return false;
       }
-      if (filters.timeIntent && !matchesTimeIntent(player.availability, filters.timeIntent)) return false;
+      if (filters.ageRange && (player.age < filters.ageRange.min || player.age > filters.ageRange.max)) {
+        return false;
+      }
+      if (filters.gender && player.gender !== filters.gender) return false;
+      if (filters.timeIntent && !matchesWhenIntent(player.availability, filters.timeIntent, customDate)) {
+        return false;
+      }
       if (normalizedQuery && !`${player.name} ${player.sport}`.toLowerCase().includes(normalizedQuery)) {
         return false;
       }
@@ -62,7 +98,7 @@ export default function DiscoverScreen() {
   const filteredSessions = useMemo(() => {
     return DISCOVER_SESSIONS.filter((session) => {
       if (filters.sport && session.sport !== filters.sport) return false;
-      if (filters.distance?.maxKm != null && session.distanceKm > filters.distance.maxKm) return false;
+      if (filters.distance != null && session.distanceKm > filters.distance) return false;
       if (sessionsTimeframe && session.timeframe !== sessionsTimeframe) return false;
       if (
         normalizedQuery &&
@@ -119,7 +155,7 @@ export default function DiscoverScreen() {
             ) : (
               <EmptyState
                 message="Aucun sportif trouvé"
-                hint="Essaie d’élargir ta distance ou de modifier tes filtres."
+                hint="Essaie d’élargir ta recherche ou de modifier tes filtres."
                 actionLabel="Réinitialiser les filtres"
                 onAction={() => setFilters(EMPTY_QUICK_FILTERS)}
               />

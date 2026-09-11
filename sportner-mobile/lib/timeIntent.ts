@@ -47,7 +47,7 @@ export function startOfDay(date: Date): Date {
   return copy;
 }
 
-function diffInDays(from: Date, to: Date) {
+export function diffInDays(from: Date, to: Date) {
   const oneDayMs = 24 * 60 * 60 * 1000;
   return Math.round((startOfDay(to).getTime() - startOfDay(from).getTime()) / oneDayMs);
 }
@@ -63,6 +63,13 @@ export function isPastDay(date: Date): boolean {
 /** "Sam. 19" — utilisé pour le chip compact une fois la sélection validée. */
 export function formatShortDateLabel(date: Date): string {
   return `${WEEKDAYS_SHORT[date.getDay()]} ${date.getDate()}`;
+}
+
+const MONTHS_SHORT = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+
+/** "14 sept." — utilisé par le chip du filtre "Quand ?" de Découvrir une fois une date choisie. */
+export function formatShortDayMonth(date: Date): string {
+  return `${date.getDate()} ${MONTHS_SHORT[date.getMonth()]}`;
 }
 
 /** "Septembre 2026" — en-tête du calendrier mensuel. */

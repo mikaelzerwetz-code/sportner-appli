@@ -1,29 +1,37 @@
 import { useMemo, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
-import { ChooseTimeModal } from '@/components/home/ChooseTimeModal';
+import { ChooseDateModal } from '@/components/discover/ChooseDateModal';
+import { DistanceFilterSheet } from '@/components/discover/DistanceFilterSheet';
 import { FilterSheet } from '@/components/discover/FilterSheet';
+import { LevelFilterSheet } from '@/components/discover/LevelFilterSheet';
+import { MoreFiltersSheet, type Gender } from '@/components/discover/MoreFiltersSheet';
 import { brand } from '@/constants/brand';
-import { DISTANCE_OPTIONS, LEVEL_RANGE_OPTIONS } from '@/lib/discoverMockData';
+import { WHEN_OPTIONS } from '@/lib/discoverMockData';
 import { SPORT_CATEGORIES, SPORTS_CATALOG } from '@/lib/sportsCatalog';
-import { TIME_INTENT_OPTIONS } from '@/lib/timeIntent';
-import type { CustomTimeSelection, TimeIntent } from '@/types/home';
-import type { DistanceOption, LevelRangeOption } from '@/types/discover';
+import { formatShortDayMonth } from '@/lib/timeIntent';
+import type { DiscoverWhenIntent, NumericRange } from '@/types/discover';
 
 export type QuickFiltersValue = {
   sport: string | null;
-  timeIntent: TimeIntent | null;
-  customSelection: CustomTimeSelection | null;
-  distance: DistanceOption | null;
-  levelRange: LevelRangeOption | null;
+  timeIntent: DiscoverWhenIntent | null;
+  /** ISO date string, uniquement pertinent quand timeIntent === 'custom'. */
+  customDate: string | null;
+  /** Rayon en km, ou null = pas de limite. */
+  distance: number | null;
+  levelRange: NumericRange | null;
+  ageRange: NumericRange | null;
+  gender: Gender | null;
 };
 
 export const EMPTY_QUICK_FILTERS: QuickFiltersValue = {
   sport: null,
   timeIntent: null,
-  customSelection: null,
+  customDate: null,
   distance: null,
   levelRange: null,
+  ageRange: null,
+  gender: null,
 };
 
 type FilterKey = 'sport' | 'when' | 'distance' | 'level';
@@ -38,8 +46,8 @@ type QuickFiltersProps = {
 };
 
 export function QuickFilters({ value, onChange, availableFilters = ALL_FILTERS }: QuickFiltersProps) {
-  const [activeSheet, setActiveSheet] = useState<FilterKey | null>(null);
-  const [chooseTimeVisible, setChooseTimeVisible] = useState(false);
+  const [activeSheet, setActiveSheet] = useState<FilterKey | 'more' | null>(null);
+  const [chooseDateVisible, setChooseDateVisible] = useState(false);
   const [sportQuery, setSportQuery] = useState('');
   const [sportCategory, setSportCategory] = useState<string>(ALL_CATEGORIES);
 
@@ -60,11 +68,17 @@ export function QuickFilters({ value, onChange, availableFilters = ALL_FILTERS }
 
   const timeIntentLabel = (() => {
     if (!value.timeIntent) return 'Quand ?';
-    if (value.timeIntent === 'custom' && value.customSelection) return value.customSelection.label;
-    return TIME_INTENT_OPTIONS.find((option) => option.key === value.timeIntent)?.label ?? 'Quand ?';
+    if (value.timeIntent === 'custom') {
+      return value.customDate ? formatShortDayMonth(new Date(value.customDate)) : 'Quand ?';
+    }
+    return WHEN_OPTIONS.find((option) => option.key === value.timeIntent)?.label ?? 'Quand ?';
   })();
 
-  const distanceLabel = value.distance ? `≤ ${value.distance.maxKm} km` : 'Distance';
+  const distanceLabel = value.distance != null ? `≤ ${value.distance} km` : 'Distance';
+  const levelLabel = value.levelRange ? `Niv. ${value.levelRange.min}–${value.levelRange.max}` : 'Niveau';
+
+  const moreFiltersCount = (value.ageRange ? 1 : 0) + (value.gender ? 1 : 0);
+  const moreFiltersLabel = moreFiltersCount > 0 ? `+ Filtres (${moreFiltersCount})` : '+ Filtres';
 
   return (
     <>
@@ -88,25 +102,19 @@ export function QuickFilters({ value, onChange, availableFilters = ALL_FILTERS }
         {availableFilters.includes('distance') ? (
           <FilterChip
             label={distanceLabel}
-            active={Boolean(value.distance)}
+            active={value.distance != null}
             onPress={() => setActiveSheet('distance')}
           />
         ) : null}
 
         {availableFilters.includes('level') ? (
-          <FilterChip
-            label={value.levelRange ? value.levelRange.label : 'Niveau'}
-            active={Boolean(value.levelRange)}
-            onPress={() => setActiveSheet('level')}
-          />
+          <FilterChip label={levelLabel} active={Boolean(value.levelRange)} onPress={() => setActiveSheet('level')} />
         ) : null}
 
         <FilterChip
-          label="+ Filtres"
-          active={false}
-          onPress={() =>
-            Alert.alert('Bientôt disponible', 'Des filtres avancés arrivent prochainement dans Découvrir.')
-          }
+          label={moreFiltersLabel}
+          active={moreFiltersCount > 0}
+          onPress={() => setActiveSheet('more')}
         />
       </ScrollView>
 
@@ -180,7 +188,7 @@ export function QuickFilters({ value, onChange, availableFilters = ALL_FILTERS }
       </FilterSheet>
 
       <FilterSheet visible={activeSheet === 'when'} title="Quand ?" onClose={closeSheet}>
-        {TIME_INTENT_OPTIONS.map((option) => {
+        {WHEN_OPTIONS.map((option) => {
           const isSelected = value.timeIntent === option.key && option.key !== 'custom';
           return (
             <TouchableOpacity
@@ -189,15 +197,17 @@ export function QuickFilters({ value, onChange, availableFilters = ALL_FILTERS }
               activeOpacity={0.8}
               onPress={() => {
                 if (option.key === 'custom') {
-                  setChooseTimeVisible(true);
+                  setChooseDateVisible(true);
                   return;
                 }
-                onChange({ ...value, timeIntent: option.key, customSelection: null });
+                onChange({ ...value, timeIntent: option.key, customDate: null });
                 closeSheet();
               }}
             >
               <Text style={styles.optionRowText}>
-                {option.key === 'custom' && value.customSelection ? value.customSelection.label : option.label}
+                {option.key === 'custom' && value.timeIntent === 'custom' && value.customDate
+                  ? formatShortDayMonth(new Date(value.customDate))
+                  : option.label}
               </Text>
             </TouchableOpacity>
           );
@@ -208,7 +218,7 @@ export function QuickFilters({ value, onChange, availableFilters = ALL_FILTERS }
             style={styles.clearRow}
             activeOpacity={0.7}
             onPress={() => {
-              onChange({ ...value, timeIntent: null, customSelection: null });
+              onChange({ ...value, timeIntent: null, customDate: null });
               closeSheet();
             }}
           >
@@ -217,55 +227,40 @@ export function QuickFilters({ value, onChange, availableFilters = ALL_FILTERS }
         ) : null}
       </FilterSheet>
 
-      <ChooseTimeModal
-        visible={chooseTimeVisible}
-        onClose={() => setChooseTimeVisible(false)}
-        onConfirm={(selection) => {
-          onChange({ ...value, timeIntent: 'custom', customSelection: selection });
-          setChooseTimeVisible(false);
+      <ChooseDateModal
+        visible={chooseDateVisible}
+        onClose={() => setChooseDateVisible(false)}
+        onConfirm={(date) => {
+          onChange({ ...value, timeIntent: 'custom', customDate: date.toISOString() });
+          setChooseDateVisible(false);
           closeSheet();
         }}
       />
 
-      <FilterSheet visible={activeSheet === 'distance'} title="Distance maximale" onClose={closeSheet}>
-        <Text style={styles.sheetSubtitle}>Jusqu’où es-tu prêt à te déplacer ?</Text>
+      <DistanceFilterSheet
+        visible={activeSheet === 'distance'}
+        value={value.distance}
+        onClose={closeSheet}
+        onApply={(maxKm) => onChange({ ...value, distance: maxKm })}
+        onClear={() => onChange({ ...value, distance: null })}
+      />
 
-        {DISTANCE_OPTIONS.map((option) => {
-          const isSelected = option.key === 'any' ? !value.distance : value.distance?.key === option.key;
-          return (
-            <TouchableOpacity
-              key={option.key}
-              style={[styles.optionRow, isSelected && styles.optionRowSelected]}
-              activeOpacity={0.8}
-              onPress={() => {
-                onChange({ ...value, distance: option.key === 'any' ? null : option });
-                closeSheet();
-              }}
-            >
-              <Text style={styles.optionRowText}>{option.label}</Text>
-            </TouchableOpacity>
-          );
-        })}
-      </FilterSheet>
+      <LevelFilterSheet
+        visible={activeSheet === 'level'}
+        value={value.levelRange}
+        onClose={closeSheet}
+        onApply={(range) => onChange({ ...value, levelRange: range })}
+        onClear={() => onChange({ ...value, levelRange: null })}
+      />
 
-      <FilterSheet visible={activeSheet === 'level'} title="Niveau" onClose={closeSheet}>
-        {LEVEL_RANGE_OPTIONS.map((option) => {
-          const isSelected = option.key === 'any' ? !value.levelRange : value.levelRange?.key === option.key;
-          return (
-            <TouchableOpacity
-              key={option.key}
-              style={[styles.optionRow, isSelected && styles.optionRowSelected]}
-              activeOpacity={0.8}
-              onPress={() => {
-                onChange({ ...value, levelRange: option.key === 'any' ? null : option });
-                closeSheet();
-              }}
-            >
-              <Text style={styles.optionRowText}>{option.label}</Text>
-            </TouchableOpacity>
-          );
-        })}
-      </FilterSheet>
+      <MoreFiltersSheet
+        visible={activeSheet === 'more'}
+        ageRange={value.ageRange}
+        gender={value.gender}
+        onClose={closeSheet}
+        onApply={(ageRange, gender) => onChange({ ...value, ageRange, gender })}
+        onClearAll={() => onChange({ ...value, ageRange: null, gender: null })}
+      />
     </>
   );
 }
@@ -309,12 +304,6 @@ const styles = StyleSheet.create({
   },
   chipTextActive: {
     color: brand.black,
-  },
-  sheetSubtitle: {
-    color: brand.textMuted,
-    fontSize: 13,
-    fontWeight: '600',
-    marginBottom: 14,
   },
   search: {
     backgroundColor: brand.surfaceMuted,
