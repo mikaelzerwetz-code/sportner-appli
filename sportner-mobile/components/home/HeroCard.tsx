@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
-  Image,
+  ImageBackground,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -24,31 +24,27 @@ function getGreeting() {
   return hour < 18 ? 'Bonjour' : 'Bonsoir';
 }
 
-// hero-home.png : 1672x941px. On affiche la photo à sa hauteur naturelle
-// (largeur écran * ratio) pour ne jamais la recadrer horizontalement.
-const HERO_IMAGE_RATIO = 941 / 1672; // hauteur / largeur
-
-// Le header et le bloc de texte vivent sur un fond plein (pas sur la photo) :
-// ça garantit qu'ils ne chevauchent jamais la status bar ni l'image, quelle
-// que soit la hauteur réelle de celle-ci.
+// hero-home.png : 1672x941px, affichée UNE SEULE FOIS en resizeMode="cover"
+// sur toute la Hero (une légère coupe des côtés est préférable à plusieurs
+// zones/images). Le header et le texte sont posés directement sur la photo.
 const HEADER_TOP_SPACING = 10;
-const HEADER_BOTTOM_SPACING = 12;
-const HEADER_CONTENT_HEIGHT = 44;
-const TEXT_ZONE_MIN_HEIGHT = 190;
 const HERO_HEIGHT_RATIO = 0.57; // ~55-60% de la hauteur visible
+const MIN_HERO_HEIGHT = 480;
 
 export function HeroCard({ user, imageSource }: HeroCardProps) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { width: screenWidth, height: screenHeight } = useWindowDimensions();
+  const { height: screenHeight } = useWindowDimensions();
+  const heroHeight = Math.max(MIN_HERO_HEIGHT, screenHeight * HERO_HEIGHT_RATIO);
 
-  const headerHeight = insets.top + HEADER_TOP_SPACING + HEADER_CONTENT_HEIGHT + HEADER_BOTTOM_SPACING;
-  const imageHeight = screenWidth * HERO_IMAGE_RATIO;
-  const targetHeroHeight = screenHeight * HERO_HEIGHT_RATIO;
-  const textZoneHeight = Math.max(TEXT_ZONE_MIN_HEIGHT, targetHeroHeight - headerHeight - imageHeight);
+  const content = (
+    <>
+      <LinearGradient
+        colors={['transparent', 'rgba(6,6,6,0.85)']}
+        style={styles.bottomGradient}
+        pointerEvents="none"
+      />
 
-  return (
-    <View style={styles.container}>
       <View style={[styles.header, { paddingTop: insets.top + HEADER_TOP_SPACING }]}>
         <View>
           <Text style={styles.greeting}>
@@ -62,27 +58,9 @@ export function HeroCard({ user, imageSource }: HeroCardProps) {
         </TouchableOpacity>
       </View>
 
-      <View style={[styles.imageBlock, { height: imageHeight }]}>
-        {imageSource ? (
-          <Image source={imageSource} style={StyleSheet.absoluteFill} resizeMode="cover" />
-        ) : (
-          <LinearGradient
-            colors={['#3A3A34', '#1C1C18', '#0A0A0A']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={StyleSheet.absoluteFill}
-          />
-        )}
-        <LinearGradient
-          colors={['transparent', 'rgba(10,10,10,0.9)']}
-          style={styles.imageSeam}
-          pointerEvents="none"
-        />
-      </View>
-
-      <View style={[styles.textZone, { height: textZoneHeight }]}>
+      <View style={styles.bottomContent}>
         <Text style={styles.headline}>
-          Avec qui tu bouges{' '}
+          Avec qui{'\n'}tu bouges{'\n'}
           <Text style={styles.headlineAccent}>aujourd’hui ?</Text>
         </Text>
 
@@ -90,67 +68,93 @@ export function HeroCard({ user, imageSource }: HeroCardProps) {
           <Text style={styles.ctaText}>Trouver un partenaire →</Text>
         </TouchableOpacity>
       </View>
+    </>
+  );
+
+  if (imageSource) {
+    return (
+      <ImageBackground
+        source={imageSource}
+        resizeMode="cover"
+        style={[styles.container, { height: heroHeight }]}
+      >
+        {content}
+      </ImageBackground>
+    );
+  }
+
+  return (
+    <View style={[styles.container, { height: heroHeight }]}>
+      <LinearGradient
+        colors={['#3A3A34', '#1C1C18', '#0A0A0A']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={StyleSheet.absoluteFill}
+      />
+      {content}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    width: '100%',
     overflow: 'hidden',
     backgroundColor: brand.black,
-    borderBottomLeftRadius: 28,
-    borderBottomRightRadius: 28,
+    borderRadius: 28,
+  },
+  bottomGradient: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: '62%',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     paddingHorizontal: 20,
-    paddingBottom: HEADER_BOTTOM_SPACING,
   },
   greeting: {
     color: '#FFFFFF',
-    fontSize: 21,
+    fontSize: 22,
     fontWeight: '800',
+    textShadowColor: 'rgba(0,0,0,0.45)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
   },
   location: {
-    color: 'rgba(255,255,255,0.75)',
+    color: 'rgba(255,255,255,0.92)',
     fontSize: 13,
     fontWeight: '600',
     marginTop: 3,
+    textShadowColor: 'rgba(0,0,0,0.45)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
   },
   notifButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,0.12)',
+    backgroundColor: 'rgba(20,20,20,0.4)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   notifIcon: {
     fontSize: 16,
   },
-  imageBlock: {
-    width: '100%',
-  },
-  imageSeam: {
+  bottomContent: {
     position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    height: '35%',
-  },
-  textZone: {
-    paddingHorizontal: 20,
-    paddingTop: 18,
-    justifyContent: 'space-between',
-    paddingBottom: 22,
+    left: 20,
+    right: 20,
+    bottom: 20,
   },
   headline: {
     color: '#FFFFFF',
-    fontSize: 26,
+    fontSize: 30,
     fontWeight: '900',
-    lineHeight: 32,
+    lineHeight: 33,
   },
   headlineAccent: {
     color: brand.accent,
@@ -158,6 +162,7 @@ const styles = StyleSheet.create({
   cta: {
     backgroundColor: brand.accent,
     borderRadius: 26,
+    marginTop: 14,
     paddingVertical: 16,
     alignItems: 'center',
     justifyContent: 'center',
