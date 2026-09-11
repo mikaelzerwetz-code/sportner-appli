@@ -16,12 +16,6 @@ import type { CurrentUser } from '@/types/home';
 
 type HeroCardProps = {
   user: CurrentUser;
-  /**
-   * Passe un vrai asset (ex. require('@/assets/images/hero.jpg')) quand la
-   * photo lifestyle définitive est prête : un seul prop à fournir, rien
-   * d'autre à changer dans ce composant. Sans image, un dégradé sombre sert
-   * de placeholder.
-   */
   imageSource?: ImageSourcePropType;
 };
 
@@ -30,48 +24,32 @@ function getGreeting() {
   return hour < 18 ? 'Bonjour' : 'Bonsoir';
 }
 
-/**
- * hero-home.png : 1672x941px exactement. La hauteur de la Hero est calculée
- * directement à partir de la largeur d'écran réelle avec ce même ratio
- * (height = screenWidth * 941/1672) : le conteneur a donc TOUJOURS
- * exactement le ratio de l'image, quel que soit l'appareil. Aucun crop,
- * aucun zoom, aucun letterbox n'est possible par construction — resizeMode
- * n'a même plus d'incidence puisque la boîte correspond pixel pour pixel
- * au ratio de la source.
- */
+// hero-home.png : 1672x941px. On affiche la photo à sa hauteur naturelle
+// (largeur écran * ratio) pour ne jamais la recadrer horizontalement.
 const HERO_IMAGE_RATIO = 941 / 1672; // hauteur / largeur
+
+// Le header et le bloc de texte vivent sur un fond plein (pas sur la photo) :
+// ça garantit qu'ils ne chevauchent jamais la status bar ni l'image, quelle
+// que soit la hauteur réelle de celle-ci.
+const HEADER_TOP_SPACING = 10;
+const HEADER_BOTTOM_SPACING = 12;
+const HEADER_CONTENT_HEIGHT = 44;
+const TEXT_ZONE_MIN_HEIGHT = 190;
+const HERO_HEIGHT_RATIO = 0.57; // ~55-60% de la hauteur visible
 
 export function HeroCard({ user, imageSource }: HeroCardProps) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { width: screenWidth } = useWindowDimensions();
-  const heroHeight = screenWidth * HERO_IMAGE_RATIO;
+  const { width: screenWidth, height: screenHeight } = useWindowDimensions();
+
+  const headerHeight = insets.top + HEADER_TOP_SPACING + HEADER_CONTENT_HEIGHT + HEADER_BOTTOM_SPACING;
+  const imageHeight = screenWidth * HERO_IMAGE_RATIO;
+  const targetHeroHeight = screenHeight * HERO_HEIGHT_RATIO;
+  const textZoneHeight = Math.max(TEXT_ZONE_MIN_HEIGHT, targetHeroHeight - headerHeight - imageHeight);
 
   return (
-    <View style={[styles.imageBlock, { height: heroHeight }]}>
-      {imageSource ? (
-        <Image source={imageSource} style={StyleSheet.absoluteFill} resizeMode="cover" />
-      ) : (
-        <LinearGradient
-          colors={['#3A3A34', '#1C1C18', '#0A0A0A']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={StyleSheet.absoluteFill}
-        />
-      )}
-
-      <LinearGradient
-        colors={['rgba(0,0,0,0.45)', 'transparent']}
-        style={styles.topGradient}
-        pointerEvents="none"
-      />
-      <LinearGradient
-        colors={['transparent', 'rgba(0,0,0,0.68)']}
-        style={styles.bottomGradient}
-        pointerEvents="none"
-      />
-
-      <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
+    <View style={styles.container}>
+      <View style={[styles.header, { paddingTop: insets.top + HEADER_TOP_SPACING }]}>
         <View>
           <Text style={styles.greeting}>
             {getGreeting()} {user.firstName} 👋
@@ -84,9 +62,27 @@ export function HeroCard({ user, imageSource }: HeroCardProps) {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.bottomContent}>
+      <View style={[styles.imageBlock, { height: imageHeight }]}>
+        {imageSource ? (
+          <Image source={imageSource} style={StyleSheet.absoluteFill} resizeMode="cover" />
+        ) : (
+          <LinearGradient
+            colors={['#3A3A34', '#1C1C18', '#0A0A0A']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={StyleSheet.absoluteFill}
+          />
+        )}
+        <LinearGradient
+          colors={['transparent', 'rgba(10,10,10,0.9)']}
+          style={styles.imageSeam}
+          pointerEvents="none"
+        />
+      </View>
+
+      <View style={[styles.textZone, { height: textZoneHeight }]}>
         <Text style={styles.headline}>
-          Avec qui{'\n'}tu bouges{'\n'}
+          Avec qui tu bouges{' '}
           <Text style={styles.headlineAccent}>aujourd’hui ?</Text>
         </Text>
 
@@ -99,43 +95,26 @@ export function HeroCard({ user, imageSource }: HeroCardProps) {
 }
 
 const styles = StyleSheet.create({
-  imageBlock: {
+  container: {
     overflow: 'hidden',
     backgroundColor: brand.black,
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
   },
-  topGradient: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    height: '32%',
-  },
-  bottomGradient: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    height: '55%',
-  },
   header: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     paddingHorizontal: 20,
+    paddingBottom: HEADER_BOTTOM_SPACING,
   },
   greeting: {
     color: '#FFFFFF',
-    fontSize: 22,
+    fontSize: 21,
     fontWeight: '800',
   },
   location: {
-    color: 'rgba(255,255,255,0.9)',
+    color: 'rgba(255,255,255,0.75)',
     fontSize: 13,
     fontWeight: '600',
     marginTop: 3,
@@ -144,24 +123,34 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(20,20,20,0.4)',
+    backgroundColor: 'rgba(255,255,255,0.12)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   notifIcon: {
     fontSize: 16,
   },
-  bottomContent: {
+  imageBlock: {
+    width: '100%',
+  },
+  imageSeam: {
     position: 'absolute',
-    left: 20,
-    right: 20,
-    bottom: 18,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: '35%',
+  },
+  textZone: {
+    paddingHorizontal: 20,
+    paddingTop: 18,
+    justifyContent: 'space-between',
+    paddingBottom: 22,
   },
   headline: {
     color: '#FFFFFF',
-    fontSize: 30,
+    fontSize: 26,
     fontWeight: '900',
-    lineHeight: 33,
+    lineHeight: 32,
   },
   headlineAccent: {
     color: brand.accent,
@@ -169,7 +158,6 @@ const styles = StyleSheet.create({
   cta: {
     backgroundColor: brand.accent,
     borderRadius: 26,
-    marginTop: 14,
     paddingVertical: 16,
     alignItems: 'center',
     justifyContent: 'center',
