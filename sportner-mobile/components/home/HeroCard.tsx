@@ -1,6 +1,14 @@
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Image, StyleSheet, Text, TouchableOpacity, View, type ImageSourcePropType } from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
+  type ImageSourcePropType,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { brand } from '@/constants/brand';
@@ -23,26 +31,26 @@ function getGreeting() {
 }
 
 /**
- * DIAGNOSTIC (vérifié avant ce fix) :
- * - hero-home.png fait exactement 1672x941px (ratio 1,7768).
- * - Le conteneur Hero n'a pas de largeur fixe : il s'étire sur toute la
- *   largeur de l'écran (aucun padding parent), donc ratio conteneur très
- *   différent du ratio de l'image.
- * Tout réglage de position/zoom/scale manuel a été retiré. resizeMode
- * "contain" garantit par construction que 100% de l'image source est
- * visible, sans recadrage, quel que soit le ratio du conteneur ; le fond
- * noir du conteneur comble l'espace laissé par les bandes haut/bas.
+ * hero-home.png : 1672x941px exactement. La hauteur de la Hero est calculée
+ * directement à partir de la largeur d'écran réelle avec ce même ratio
+ * (height = screenWidth * 941/1672) : le conteneur a donc TOUJOURS
+ * exactement le ratio de l'image, quel que soit l'appareil. Aucun crop,
+ * aucun zoom, aucun letterbox n'est possible par construction — resizeMode
+ * n'a même plus d'incidence puisque la boîte correspond pixel pour pixel
+ * au ratio de la source.
  */
-const HERO_HEIGHT = 420;
+const HERO_IMAGE_RATIO = 941 / 1672; // hauteur / largeur
 
 export function HeroCard({ user, imageSource }: HeroCardProps) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { width: screenWidth } = useWindowDimensions();
+  const heroHeight = screenWidth * HERO_IMAGE_RATIO;
 
   return (
-    <View style={styles.imageBlock}>
+    <View style={[styles.imageBlock, { height: heroHeight }]}>
       {imageSource ? (
-        <Image source={imageSource} style={StyleSheet.absoluteFill} resizeMode="contain" />
+        <Image source={imageSource} style={StyleSheet.absoluteFill} resizeMode="cover" />
       ) : (
         <LinearGradient
           colors={['#3A3A34', '#1C1C18', '#0A0A0A']}
@@ -92,7 +100,6 @@ export function HeroCard({ user, imageSource }: HeroCardProps) {
 
 const styles = StyleSheet.create({
   imageBlock: {
-    height: HERO_HEIGHT,
     overflow: 'hidden',
     backgroundColor: brand.black,
     borderBottomLeftRadius: 28,
