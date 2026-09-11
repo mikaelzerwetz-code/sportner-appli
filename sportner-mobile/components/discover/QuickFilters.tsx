@@ -64,6 +64,8 @@ export function QuickFilters({ value, onChange, availableFilters = ALL_FILTERS }
     return TIME_INTENT_OPTIONS.find((option) => option.key === value.timeIntent)?.label ?? 'Quand ?';
   })();
 
+  const distanceLabel = value.distance ? `≤ ${value.distance.maxKm} km` : 'Distance';
+
   return (
     <>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.list}>
@@ -85,7 +87,7 @@ export function QuickFilters({ value, onChange, availableFilters = ALL_FILTERS }
 
         {availableFilters.includes('distance') ? (
           <FilterChip
-            label={value.distance ? value.distance.label : 'Distance'}
+            label={distanceLabel}
             active={Boolean(value.distance)}
             onPress={() => setActiveSheet('distance')}
           />
@@ -225,7 +227,9 @@ export function QuickFilters({ value, onChange, availableFilters = ALL_FILTERS }
         }}
       />
 
-      <FilterSheet visible={activeSheet === 'distance'} title="Distance" onClose={closeSheet}>
+      <FilterSheet visible={activeSheet === 'distance'} title="Distance maximale" onClose={closeSheet}>
+        <Text style={styles.sheetSubtitle}>Jusqu’où es-tu prêt à te déplacer ?</Text>
+
         {DISTANCE_OPTIONS.map((option) => {
           const isSelected = option.key === 'any' ? !value.distance : value.distance?.key === option.key;
           return (
@@ -305,6 +309,12 @@ const styles = StyleSheet.create({
   },
   chipTextActive: {
     color: brand.black,
+  },
+  sheetSubtitle: {
+    color: brand.textMuted,
+    fontSize: 13,
+    fontWeight: '600',
+    marginBottom: 14,
   },
   search: {
     backgroundColor: brand.surfaceMuted,

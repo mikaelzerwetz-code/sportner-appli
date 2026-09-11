@@ -1,17 +1,24 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { brand } from '@/constants/brand';
 
 type EmptyStateProps = {
   message: string;
   hint?: string;
+  actionLabel?: string;
+  onAction?: () => void;
 };
 
-export function EmptyState({ message, hint }: EmptyStateProps) {
+export function EmptyState({ message, hint, actionLabel, onAction }: EmptyStateProps) {
   return (
     <View style={styles.container}>
       <Text style={styles.message}>{message}</Text>
       {hint ? <Text style={styles.hint}>{hint}</Text> : null}
+      {actionLabel && onAction ? (
+        <TouchableOpacity style={styles.action} activeOpacity={0.85} onPress={onAction}>
+          <Text style={styles.actionText}>{actionLabel}</Text>
+        </TouchableOpacity>
+      ) : null}
     </View>
   );
 }
@@ -41,5 +48,17 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginTop: 4,
     textAlign: 'center',
+  },
+  action: {
+    backgroundColor: brand.accent,
+    borderRadius: 14,
+    paddingHorizontal: 18,
+    paddingVertical: 11,
+    marginTop: 14,
+  },
+  actionText: {
+    color: brand.black,
+    fontSize: 13,
+    fontWeight: '800',
   },
 });

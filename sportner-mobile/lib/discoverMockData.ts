@@ -131,11 +131,12 @@ export const DISCOVER_COACHES: Coach[] = [
 ];
 
 export const DISTANCE_OPTIONS: DistanceOption[] = [
-  { key: 'any', label: 'Toutes distances', maxKm: null },
-  { key: '2', label: '< 2 km', maxKm: 2 },
-  { key: '5', label: '< 5 km', maxKm: 5 },
-  { key: '10', label: '< 10 km', maxKm: 10 },
-  { key: '20', label: '< 20 km', maxKm: 20 },
+  { key: 'any', label: 'Peu importe', maxKm: null },
+  { key: '1', label: '1 km', maxKm: 1 },
+  { key: '3', label: '3 km', maxKm: 3 },
+  { key: '5', label: '5 km', maxKm: 5 },
+  { key: '10', label: '10 km', maxKm: 10 },
+  { key: '25', label: '25 km', maxKm: 25 },
 ];
 
 export const LEVEL_RANGE_OPTIONS: LevelRangeOption[] = [

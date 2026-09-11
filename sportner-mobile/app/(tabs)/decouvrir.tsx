@@ -117,7 +117,12 @@ export default function DiscoverScreen() {
             filteredPlayers.length > 0 ? (
               filteredPlayers.map((player) => <PlayerCard key={player.id} player={player} />)
             ) : (
-              <EmptyState message="Aucun partenaire trouvé" hint="Essaie d’élargir tes filtres." />
+              <EmptyState
+                message="Aucun sportif trouvé"
+                hint="Essaie d’élargir ta distance ou de modifier tes filtres."
+                actionLabel="Réinitialiser les filtres"
+                onAction={() => setFilters(EMPTY_QUICK_FILTERS)}
+              />
             )
           ) : null}
 
