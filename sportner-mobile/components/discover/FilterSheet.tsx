@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { colors } from '@/constants/theme';
+import { brand } from '@/constants/brand';
 
 type FilterSheetProps = {
   visible: boolean;
@@ -33,17 +33,14 @@ export function FilterSheet({ visible, title, onClose, children }: FilterSheetPr
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(2, 6, 12, 0.6)',
+    backgroundColor: 'rgba(10, 10, 10, 0.5)',
     justifyContent: 'flex-end',
   },
   sheet: {
     maxHeight: '82%',
-    backgroundColor: colors.background,
+    backgroundColor: brand.surface,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderBottomWidth: 0,
     paddingHorizontal: 20,
     paddingTop: 16,
     paddingBottom: 28,
@@ -55,7 +52,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   headerTitle: {
-    color: colors.text,
+    color: brand.text,
     fontSize: 17,
     fontWeight: '800',
   },
@@ -63,14 +60,12 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
+    backgroundColor: brand.surfaceMuted,
     alignItems: 'center',
     justifyContent: 'center',
   },
   closeButtonText: {
-    color: colors.text,
+    color: brand.text,
     fontSize: 17,
     fontWeight: '700',
     lineHeight: 19,

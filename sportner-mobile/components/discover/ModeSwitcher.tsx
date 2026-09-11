@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { colors } from '@/constants/theme';
+import { brand } from '@/constants/brand';
 import type { DiscoverMode } from '@/types/discover';
 
 const MODES: { key: DiscoverMode; label: string }[] = [
@@ -38,28 +38,24 @@ export function ModeSwitcher({ value, onChange }: ModeSwitcherProps) {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 14,
-    padding: 4,
-    marginTop: 14,
+    gap: 8,
+    marginTop: 16,
   },
   tab: {
-    flex: 1,
-    borderRadius: 11,
+    paddingHorizontal: 16,
     paddingVertical: 9,
-    alignItems: 'center',
+    borderRadius: 20,
+    backgroundColor: 'transparent',
   },
   tabActive: {
-    backgroundColor: colors.accent,
+    backgroundColor: brand.accent,
   },
   tabText: {
-    color: colors.textMuted,
-    fontSize: 12.5,
+    color: brand.textMuted,
+    fontSize: 13,
     fontWeight: '700',
   },
   tabTextActive: {
-    color: colors.text,
+    color: brand.black,
   },
 });

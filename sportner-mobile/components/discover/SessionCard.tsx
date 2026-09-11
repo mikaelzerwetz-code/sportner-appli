@@ -1,6 +1,6 @@
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { colors } from '@/constants/theme';
+import { brand } from '@/constants/brand';
 import type { DiscoverSession } from '@/types/discover';
 
 type SessionCardProps = {
@@ -37,39 +37,42 @@ export function SessionCard({ session }: SessionCardProps) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 16,
-    padding: 12,
+    backgroundColor: brand.surface,
+    borderRadius: 20,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 2,
   },
   title: {
-    color: colors.text,
-    fontSize: 13.5,
+    color: brand.text,
+    fontSize: 15,
     fontWeight: '800',
   },
   time: {
-    color: colors.accentSoft,
-    fontSize: 12,
+    color: brand.textMuted,
+    fontSize: 12.5,
     fontWeight: '700',
-    marginTop: 4,
+    marginTop: 5,
   },
   level: {
-    color: colors.textMuted,
-    fontSize: 12,
+    color: brand.textMuted,
+    fontSize: 12.5,
     fontWeight: '600',
     marginTop: 3,
   },
   button: {
-    backgroundColor: colors.accent,
-    borderRadius: 12,
-    paddingVertical: 9,
+    backgroundColor: brand.accent,
+    borderRadius: 14,
+    paddingVertical: 11,
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 12,
   },
   buttonText: {
-    color: colors.text,
-    fontSize: 13,
+    color: brand.black,
+    fontSize: 13.5,
     fontWeight: '800',
   },
 });

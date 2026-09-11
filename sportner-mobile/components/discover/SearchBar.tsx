@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
-import { colors } from '@/constants/theme';
+import { brand } from '@/constants/brand';
 
 type SearchBarProps = {
   value: string;
@@ -14,7 +14,7 @@ export function SearchBar({ value, onChangeText }: SearchBarProps) {
       <TextInput
         style={styles.input}
         placeholder="Sport, joueur, club, lieu…"
-        placeholderTextColor={colors.textMuted}
+        placeholderTextColor={brand.textMuted}
         value={value}
         onChangeText={onChangeText}
         returnKeyType="search"
@@ -27,12 +27,15 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 14,
+    backgroundColor: brand.surfaceMuted,
+    borderRadius: 16,
     paddingHorizontal: 14,
-    marginTop: 14,
+    marginTop: 16,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 1,
   },
   icon: {
     fontSize: 14,
@@ -40,7 +43,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    color: colors.text,
+    color: brand.text,
     fontSize: 14,
     paddingVertical: 12,
   },

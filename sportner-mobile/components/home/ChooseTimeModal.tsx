@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { colors } from '@/constants/theme';
+import { brand } from '@/constants/brand';
 import {
   CALENDAR_WEEKDAY_LETTERS,
   TIME_PERIODS,
@@ -240,17 +240,14 @@ export function ChooseTimeModal({ visible, onClose, onConfirm }: ChooseTimeModal
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(2, 6, 12, 0.6)',
+    backgroundColor: 'rgba(10, 10, 10, 0.5)',
     justifyContent: 'flex-end',
   },
   sheet: {
     maxHeight: '86%',
-    backgroundColor: colors.background,
+    backgroundColor: brand.surface,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderBottomWidth: 0,
     paddingHorizontal: 20,
     paddingTop: 16,
     paddingBottom: 24,
@@ -262,7 +259,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   headerTitle: {
-    color: colors.text,
+    color: brand.text,
     fontSize: 17,
     fontWeight: '800',
   },
@@ -270,20 +267,18 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
+    backgroundColor: brand.surfaceMuted,
     alignItems: 'center',
     justifyContent: 'center',
   },
   closeButtonText: {
-    color: colors.text,
+    color: brand.text,
     fontSize: 17,
     fontWeight: '700',
     lineHeight: 19,
   },
   label: {
-    color: colors.textMuted,
+    color: brand.textMuted,
     fontSize: 11,
     fontWeight: '800',
     letterSpacing: 0.4,
@@ -301,9 +296,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
+    backgroundColor: brand.surfaceMuted,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -311,12 +304,12 @@ const styles = StyleSheet.create({
     opacity: 0.3,
   },
   navButtonText: {
-    color: colors.text,
+    color: brand.text,
     fontSize: 16,
     fontWeight: '800',
   },
   monthLabel: {
-    color: colors.text,
+    color: brand.text,
     fontSize: 14,
     fontWeight: '800',
   },
@@ -327,7 +320,7 @@ const styles = StyleSheet.create({
   weekdayLabel: {
     flex: 1,
     textAlign: 'center',
-    color: colors.textDim,
+    color: brand.textMuted,
     fontSize: 11,
     fontWeight: '700',
   },
@@ -348,22 +341,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   dayCircleSelected: {
-    backgroundColor: colors.accent,
+    backgroundColor: brand.accent,
   },
   dayCircleToday: {
     borderWidth: 1,
-    borderColor: colors.accent,
+    borderColor: brand.accent,
   },
   dayText: {
-    color: colors.text,
+    color: brand.text,
     fontSize: 13,
     fontWeight: '600',
   },
   dayTextDisabled: {
-    color: colors.textDim,
+    color: brand.textMuted,
   },
   dayTextSelected: {
-    color: colors.text,
+    color: brand.black,
     fontWeight: '800',
   },
   periods: {
@@ -373,24 +366,21 @@ const styles = StyleSheet.create({
   },
   periodChip: {
     flex: 1,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
+    backgroundColor: brand.surfaceMuted,
     borderRadius: 14,
     paddingVertical: 12,
     alignItems: 'center',
   },
   periodChipSelected: {
-    backgroundColor: colors.accent,
-    borderColor: colors.accent,
+    backgroundColor: brand.accent,
   },
   periodChipText: {
-    color: colors.textMuted,
+    color: brand.textMuted,
     fontSize: 12.5,
     fontWeight: '700',
   },
   periodChipTextSelected: {
-    color: colors.text,
+    color: brand.black,
   },
   timeSlots: {
     flexDirection: 'row',
@@ -399,27 +389,24 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   timeSlotChip: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
+    backgroundColor: brand.surfaceMuted,
     borderRadius: 12,
     paddingHorizontal: 13,
     paddingVertical: 8,
   },
   timeSlotChipSelected: {
-    backgroundColor: colors.accent,
-    borderColor: colors.accent,
+    backgroundColor: brand.accent,
   },
   timeSlotChipText: {
-    color: colors.textMuted,
+    color: brand.textMuted,
     fontSize: 12,
     fontWeight: '700',
   },
   timeSlotChipTextSelected: {
-    color: colors.text,
+    color: brand.black,
   },
   confirmButton: {
-    backgroundColor: colors.accent,
+    backgroundColor: brand.accent,
     borderRadius: 14,
     paddingVertical: 14,
     alignItems: 'center',
@@ -429,7 +416,7 @@ const styles = StyleSheet.create({
     opacity: 0.4,
   },
   confirmButtonText: {
-    color: colors.text,
+    color: brand.black,
     fontSize: 14,
     fontWeight: '800',
   },

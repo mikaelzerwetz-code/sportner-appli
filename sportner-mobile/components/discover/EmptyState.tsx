@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-import { colors } from '@/constants/theme';
+import { brand } from '@/constants/brand';
 
 type EmptyStateProps = {
   message: string;
@@ -18,22 +18,25 @@ export function EmptyState({ message, hint }: EmptyStateProps) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 16,
+    backgroundColor: brand.surface,
+    borderRadius: 20,
     paddingVertical: 28,
     paddingHorizontal: 16,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 1,
   },
   message: {
-    color: colors.text,
+    color: brand.text,
     fontSize: 14,
     fontWeight: '800',
     textAlign: 'center',
   },
   hint: {
-    color: colors.textMuted,
+    color: brand.textMuted,
     fontSize: 12.5,
     fontWeight: '600',
     marginTop: 4,

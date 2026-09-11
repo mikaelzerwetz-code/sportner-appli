@@ -1,10 +1,16 @@
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, StyleSheet, Text, TouchableOpacity, View, type ImageSourcePropType } from 'react-native';
 
-import { colors } from '@/constants/theme';
+import { brand } from '@/constants/brand';
 import type { NearbyPlayer } from '@/types/home';
 
 type PlayerCardProps = {
   player: NearbyPlayer;
+};
+
+/** Photos réelles déjà disponibles pour Lucas et Sarah ; les autres profils gardent un placeholder initiale. */
+const PLAYER_PHOTOS: Record<string, ImageSourcePropType> = {
+  lucas: require('@/assets/images/lucas.png'),
+  sarah: require('@/assets/images/sarah.png'),
 };
 
 function formatDistance(distanceKm: number) {
@@ -12,10 +18,22 @@ function formatDistance(distanceKm: number) {
 }
 
 export function PlayerCard({ player }: PlayerCardProps) {
+  const photo = PLAYER_PHOTOS[player.id];
+
   return (
-    <View style={styles.card}>
-      <View style={styles.avatar}>
-        <Text style={styles.avatarText}>{player.name.charAt(0)}</Text>
+    <TouchableOpacity
+      style={styles.card}
+      activeOpacity={0.85}
+      onPress={() =>
+        Alert.alert('Bientôt disponible', 'La fiche profil complète arrive avec la connexion Supabase.')
+      }
+    >
+      <View style={styles.photo}>
+        {photo ? (
+          <Image source={photo} style={styles.photoImage} resizeMode="cover" />
+        ) : (
+          <Text style={styles.photoInitial}>{player.name.charAt(0)}</Text>
+        )}
       </View>
 
       <View style={styles.info}>
@@ -23,22 +41,18 @@ export function PlayerCard({ player }: PlayerCardProps) {
           {player.name}, {player.age} ans
         </Text>
         <Text style={styles.meta}>
-          {player.sport} · Niveau {player.level}/10 ·{' '}
-          <Text style={styles.metaAccent}>{formatDistance(player.distanceKm)} km</Text>
+          {player.sport} · Niveau {player.level}/10
         </Text>
-        <Text style={styles.availability}>{player.availability}</Text>
-      </View>
+        <Text style={styles.distance}>📍 {formatDistance(player.distanceKm)} km</Text>
 
-      <TouchableOpacity
-        style={styles.cta}
-        activeOpacity={0.85}
-        onPress={() =>
-          Alert.alert('Bientôt disponible', 'La fiche profil complète arrive avec la connexion Supabase.')
-        }
-      >
-        <Text style={styles.ctaText}>Voir le profil</Text>
-      </TouchableOpacity>
-    </View>
+        <View style={styles.statusRow}>
+          <View style={styles.statusDot} />
+          <Text style={styles.statusText}>{player.availability}</Text>
+        </View>
+
+        <Text style={styles.cta}>Voir le profil →</Text>
+      </View>
+    </TouchableOpacity>
   );
 }
 
@@ -46,60 +60,75 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 16,
-    padding: 12,
+    backgroundColor: brand.surface,
+    borderRadius: 24,
+    padding: 14,
+    gap: 14,
+    shadowColor: '#000',
+    shadowOpacity: 0.07,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 3,
   },
-  avatar: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: colors.accent,
+  photo: {
+    width: 96,
+    height: 96,
+    borderRadius: 20,
+    backgroundColor: brand.surfaceMuted,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
+    overflow: 'hidden',
   },
-  avatarText: {
-    color: colors.text,
-    fontSize: 16,
+  photoImage: {
+    width: '100%',
+    height: '100%',
+  },
+  photoInitial: {
+    color: brand.textMuted,
+    fontSize: 32,
     fontWeight: '800',
   },
   info: {
     flex: 1,
-    marginRight: 10,
   },
   name: {
-    color: colors.text,
-    fontSize: 14,
+    color: brand.text,
+    fontSize: 17,
     fontWeight: '800',
   },
   meta: {
-    color: colors.textMuted,
-    fontSize: 12.5,
+    color: brand.textMuted,
+    fontSize: 13.5,
     fontWeight: '600',
-    marginTop: 3,
+    marginTop: 4,
   },
-  metaAccent: {
-    color: colors.accentSoft,
-    fontWeight: '700',
+  distance: {
+    color: brand.textMuted,
+    fontSize: 13,
+    fontWeight: '600',
+    marginTop: 2,
   },
-  availability: {
-    color: colors.accentSoft,
-    fontSize: 11.5,
+  statusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 6,
+    gap: 6,
+  },
+  statusDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 3.5,
+    backgroundColor: brand.accent,
+  },
+  statusText: {
+    color: brand.text,
+    fontSize: 12.5,
     fontWeight: '700',
-    marginTop: 3,
   },
   cta: {
-    backgroundColor: colors.borderSoft,
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 9,
-  },
-  ctaText: {
-    color: colors.accentSoft,
-    fontSize: 11.5,
+    color: brand.accent,
+    fontSize: 13,
     fontWeight: '800',
+    marginTop: 10,
   },
 });

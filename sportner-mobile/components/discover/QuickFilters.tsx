@@ -3,7 +3,7 @@ import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View 
 
 import { ChooseTimeModal } from '@/components/home/ChooseTimeModal';
 import { FilterSheet } from '@/components/discover/FilterSheet';
-import { colors } from '@/constants/theme';
+import { brand } from '@/constants/brand';
 import { DISTANCE_OPTIONS, LEVEL_RANGE_OPTIONS } from '@/lib/discoverMockData';
 import { SPORT_CATEGORIES, SPORTS_CATALOG } from '@/lib/sportsCatalog';
 import { TIME_INTENT_OPTIONS } from '@/lib/timeIntent';
@@ -112,7 +112,7 @@ export function QuickFilters({ value, onChange, availableFilters = ALL_FILTERS }
         <TextInput
           style={styles.search}
           placeholder="Rechercher un sport"
-          placeholderTextColor={colors.textMuted}
+          placeholderTextColor={brand.textMuted}
           value={sportQuery}
           onChangeText={setSportQuery}
         />
@@ -290,33 +290,28 @@ const styles = StyleSheet.create({
     paddingRight: 8,
   },
   chip: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 14,
+    backgroundColor: brand.surfaceMuted,
+    borderRadius: 20,
     paddingHorizontal: 14,
     paddingVertical: 8,
   },
   chipActive: {
-    backgroundColor: colors.accent,
-    borderColor: colors.accent,
+    backgroundColor: brand.accent,
   },
   chipText: {
-    color: colors.textMuted,
+    color: brand.textMuted,
     fontSize: 12.5,
     fontWeight: '700',
   },
   chipTextActive: {
-    color: colors.text,
+    color: brand.black,
   },
   search: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
+    backgroundColor: brand.surfaceMuted,
     borderRadius: 14,
     paddingHorizontal: 14,
     paddingVertical: 12,
-    color: colors.text,
+    color: brand.text,
     fontSize: 14,
     marginBottom: 12,
   },
@@ -329,27 +324,24 @@ const styles = StyleSheet.create({
     paddingRight: 8,
   },
   categoryChip: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 14,
+    backgroundColor: brand.surfaceMuted,
+    borderRadius: 20,
     paddingHorizontal: 14,
     paddingVertical: 8,
   },
   categoryChipActive: {
-    backgroundColor: colors.accent,
-    borderColor: colors.accent,
+    backgroundColor: brand.accent,
   },
   categoryChipText: {
-    color: colors.textMuted,
+    color: brand.textMuted,
     fontSize: 12.5,
     fontWeight: '700',
   },
   categoryChipTextActive: {
-    color: colors.text,
+    color: brand.black,
   },
   empty: {
-    color: colors.textMuted,
+    color: brand.textMuted,
     fontSize: 13,
     fontWeight: '600',
     textAlign: 'center',
@@ -359,7 +351,7 @@ const styles = StyleSheet.create({
     marginBottom: 18,
   },
   groupTitle: {
-    color: colors.textMuted,
+    color: brand.textMuted,
     fontSize: 11.5,
     fontWeight: '800',
     letterSpacing: 0.4,
@@ -367,20 +359,17 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   optionRow: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
+    backgroundColor: brand.surfaceMuted,
     borderRadius: 14,
     paddingHorizontal: 16,
     paddingVertical: 13,
     marginBottom: 8,
   },
   optionRowSelected: {
-    borderColor: colors.accent,
-    backgroundColor: 'rgba(46, 125, 255, 0.12)',
+    backgroundColor: 'rgba(140, 255, 0, 0.18)',
   },
   optionRowText: {
-    color: colors.text,
+    color: brand.text,
     fontSize: 14,
     fontWeight: '600',
   },
@@ -390,8 +379,9 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   clearRowText: {
-    color: colors.accentSoft,
+    color: brand.textMuted,
     fontSize: 12.5,
     fontWeight: '700',
+    textDecorationLine: 'underline',
   },
 });

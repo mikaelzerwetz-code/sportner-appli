@@ -10,7 +10,7 @@ import { PlayerCard } from '@/components/discover/PlayerCard';
 import { EMPTY_QUICK_FILTERS, QuickFilters, type QuickFiltersValue } from '@/components/discover/QuickFilters';
 import { SearchBar } from '@/components/discover/SearchBar';
 import { SessionCard } from '@/components/discover/SessionCard';
-import { colors } from '@/constants/theme';
+import { brand } from '@/constants/brand';
 import { DISCOVER_COACHES, DISCOVER_PLAYERS, DISCOVER_SESSIONS } from '@/lib/discoverMockData';
 import { getTimeframeForIntent } from '@/lib/timeIntent';
 import type { TimeIntent } from '@/types/home';
@@ -89,7 +89,7 @@ export default function DiscoverScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
 
       <ScrollView
         style={styles.scrollView}
@@ -149,8 +149,8 @@ export default function DiscoverScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
-    paddingHorizontal: 24,
+    backgroundColor: brand.background,
+    paddingHorizontal: 20,
   },
   scrollView: {
     flex: 1,
@@ -160,16 +160,16 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   title: {
-    color: colors.text,
-    fontSize: 24,
+    color: brand.text,
+    fontSize: 30,
     fontWeight: '900',
-    paddingTop: 18,
+    paddingTop: 12,
   },
   filtersRow: {
     marginTop: 14,
   },
   content: {
-    gap: 10,
-    marginTop: 16,
+    gap: 14,
+    marginTop: 18,
   },
 });

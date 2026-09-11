@@ -1,6 +1,6 @@
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { colors } from '@/constants/theme';
+import { brand } from '@/constants/brand';
 import type { Coach } from '@/types/discover';
 
 type CoachCardProps = {
@@ -44,46 +44,49 @@ export function CoachCard({ coach }: CoachCardProps) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 16,
-    padding: 12,
+    backgroundColor: brand.surface,
+    borderRadius: 20,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 2,
   },
   topRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   avatar: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: colors.accent,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: brand.surfaceMuted,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
   },
   avatarText: {
-    color: colors.text,
-    fontSize: 16,
+    color: brand.textMuted,
+    fontSize: 18,
     fontWeight: '800',
   },
   info: {
     flex: 1,
   },
   name: {
-    color: colors.text,
-    fontSize: 14,
+    color: brand.text,
+    fontSize: 14.5,
     fontWeight: '800',
   },
   meta: {
-    color: colors.textMuted,
+    color: brand.textMuted,
     fontSize: 12.5,
     fontWeight: '600',
     marginTop: 3,
   },
   area: {
-    color: colors.accentSoft,
+    color: brand.textMuted,
     fontSize: 11.5,
     fontWeight: '700',
     marginTop: 2,
@@ -95,25 +98,25 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   price: {
-    color: colors.text,
+    color: brand.text,
     fontSize: 12,
     fontWeight: '700',
   },
   rating: {
-    color: colors.textMuted,
+    color: brand.textMuted,
     fontSize: 11.5,
     fontWeight: '600',
   },
   button: {
-    backgroundColor: colors.accent,
-    borderRadius: 12,
-    paddingVertical: 9,
+    backgroundColor: brand.accent,
+    borderRadius: 14,
+    paddingVertical: 11,
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 12,
   },
   buttonText: {
-    color: colors.text,
-    fontSize: 13,
+    color: brand.black,
+    fontSize: 13.5,
     fontWeight: '800',
   },
 });

@@ -4,7 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { CoachCard } from '@/components/discover/CoachCard';
 import { PlayerCard } from '@/components/discover/PlayerCard';
 import { SessionCard } from '@/components/discover/SessionCard';
-import { colors } from '@/constants/theme';
+import { brand } from '@/constants/brand';
 import type { Coach, DiscoverSession, MapCategory } from '@/types/discover';
 import type { NearbyPlayer } from '@/types/home';
 
@@ -125,25 +125,28 @@ export function MapPreview({ sessions, players, coaches }: MapPreviewProps) {
 
 const styles = StyleSheet.create({
   placeholder: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 18,
+    backgroundColor: brand.surface,
+    borderRadius: 22,
     paddingVertical: 28,
     paddingHorizontal: 18,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 2,
   },
   placeholderIcon: {
     fontSize: 28,
     marginBottom: 8,
   },
   placeholderTitle: {
-    color: colors.text,
+    color: brand.text,
     fontSize: 15,
     fontWeight: '800',
   },
   placeholderText: {
-    color: colors.textMuted,
+    color: brand.textMuted,
     fontSize: 12.5,
     fontWeight: '600',
     textAlign: 'center',
@@ -157,30 +160,27 @@ const styles = StyleSheet.create({
     marginTop: 14,
   },
   categoryChip: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 14,
+    backgroundColor: brand.surfaceMuted,
+    borderRadius: 20,
     paddingHorizontal: 14,
     paddingVertical: 8,
   },
   categoryChipActive: {
-    backgroundColor: colors.accent,
-    borderColor: colors.accent,
+    backgroundColor: brand.accent,
   },
   categoryChipText: {
-    color: colors.textMuted,
+    color: brand.textMuted,
     fontSize: 12.5,
     fontWeight: '700',
   },
   categoryChipTextActive: {
-    color: colors.text,
+    color: brand.black,
   },
   group: {
     marginTop: 18,
   },
   groupTitle: {
-    color: colors.textMuted,
+    color: brand.textMuted,
     fontSize: 11.5,
     fontWeight: '800',
     letterSpacing: 0.4,
@@ -188,18 +188,21 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   groupList: {
-    gap: 8,
+    gap: 10,
   },
   noticeCard: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 14,
+    backgroundColor: brand.surface,
+    borderRadius: 16,
     padding: 14,
     marginTop: 18,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 1,
   },
   noticeText: {
-    color: colors.textMuted,
+    color: brand.textMuted,
     fontSize: 12,
     fontWeight: '600',
     textAlign: 'center',
